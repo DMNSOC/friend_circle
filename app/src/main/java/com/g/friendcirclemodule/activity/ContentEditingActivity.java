@@ -27,6 +27,8 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
     int type = 1;
     @Override
     protected void initData() {
+        adjustCustomStatusBar(viewbinding.mainToolbar);
+        initInsets(viewbinding.main);
         Bundle receivedBundle = getIntent().getExtras();
         if (receivedBundle != null) {
             type = receivedBundle.getInt("TYPE");

@@ -23,7 +23,6 @@ public class SettingDialog extends BaseDialog<SettingDialogBinding, BaseModel>  
         viewbinding.settingSetName.setOnClickListener(v -> {
             SetNameDialog dialog = new SetNameDialog(this.getContext());
             dialog.show();
-            dialog.setDialogSize();
             cancel();
         });
     }

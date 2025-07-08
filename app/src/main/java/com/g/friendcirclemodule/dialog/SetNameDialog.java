@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
@@ -19,11 +21,14 @@ import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
+import com.g.friendcirclemodule.utlis.SafeHandler;
 
 public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
+    private final Context context;
     int uId = 1;
     public SetNameDialog(@NonNull Context context) {
         super(context);
+        this.context = context;
     }
 
     @Override
@@ -39,12 +44,16 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             cancel();
         });
+        Handler mHandler = new SafeHandler(context, Looper.getMainLooper());
+        mHandler.sendEmptyMessageDelayed(1,300);
     }
 
     @Override
     public void setDialogSize() {
         super.setDialogSize();
-        handler.sendEmptyMessageDelayed(1,100);
+        Handler mHandler = new SafeHandler(context, Looper.getMainLooper());
+//        mHandler.sendEmptyMessageDelayed(1,300);
+//        handleKeyboardVisibility();
     }
 
 
@@ -55,11 +64,31 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
     }
 
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    };
+
+    private void handleKeyboardVisibility() {
+
+        // 监听布局变化（键盘弹出或收起时会触发）
+        viewbinding.getRoot().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                viewbinding.getRoot().getWindowVisibleDisplayFrame(r);
+
+                // 获取屏幕高度
+                int screenHeight = viewbinding.getRoot().getRootView().getHeight();
+
+                // 计算键盘高度
+                int keyboardHeight = screenHeight - r.bottom;
+                Log.i("222222222", String.valueOf(screenHeight) + "=======" + r.bottom);
+                // 判断键盘是否弹出
+                if (screenHeight == 452 && r.bottom <= 2200) { // 键盘弹出（阈值可以根据设备调整）
+                    viewbinding.getRoot().setPadding(0, 0, 0, 1076); // 上移 Dialog
+                } else if (r.bottom >= 2200 && screenHeight < 452) {
+                    viewbinding.getRoot().setPadding(0, 0, 0, 0); // 恢复原位
+
+                }
+            }
+        });
+    }
+
 }

@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,19 +39,37 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     int offsetY = 0;
     private Handler longPressHandler;
     private Runnable longPressRunnable;
+    boolean isOpen = true;
 
-    boolean isOpne = false;
+    boolean isReceiverRegistered = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LocalBroadcastManager.getInstance(this) // 注册广播接收器
-                .registerReceiver(receiver, new IntentFilter("ACTION_DIALOG_CLOSED"));
+    protected void onStart() {
+        super.onStart();
+        Log.i("dtata" , String.valueOf(FeedManager.getTypeList()));
+        if (!isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this) // 注册广播接收器
+                    .registerReceiver(receiver, new IntentFilter("ACTION_DIALOG_CLOSED"));
+            isReceiverRegistered = true;
+        }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this)
+                    .unregisterReceiver(receiver);
+            isReceiverRegistered = false;
+        }
+    }
+
+
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if ("ACTION_DIALOG_CLOSED".equals(intent.getAction())) {
+                Log.i("dtata" , "111111");
                 onResume();
             }
         }
@@ -60,8 +77,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
     @Override
     protected void initView() {
+        getStatusBarHeight();
+        viewbinding.mainToolbar.setPadding(0,getStatusBarHeight(),0,0);
+        initInsets(viewbinding.main);
         hostActivity = this;
-        Log.i("dtata" , String.valueOf(FeedManager.getTypeList()));
         viewbinding.mainBtnBack.setOnClickListener(v -> { finish();});
 
         longPressHandler = new Handler(Looper.getMainLooper());
@@ -77,7 +96,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             Intent i = new Intent(hostActivity, ContentEditingActivity.class);
                             i.putExtras(bundle);
                             startActivity(i);
-                            isOpne = true;
+                            isOpen = true;
                         };
                         longPressHandler.postDelayed(longPressRunnable, 500); // 500ms 长按时间
                         break;
@@ -85,7 +104,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     case MotionEvent.ACTION_UP:
                         // 移除长按检测
                         longPressHandler.removeCallbacks(longPressRunnable);
-                        if (!isOpne) {
+                        if (!isOpen) {
                             new PhotoLibrary.Builder(hostActivity)
                                     .setMode(PhotoLibrary.MODE_ALL)
                                     .setMultiSelect(true)
@@ -101,26 +120,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                     })
                                     .open();
                         }
-                        isOpne = false;
+                        isOpen = false;
                         break;
                 }
                 return true;
             }
         });
-
-//        viewbinding.mainBtnCamera.setOnClickListener(v -> {
-//            new PhotoLibrary.Builder(this)
-//                    .setMode(PhotoLibrary.MODE_ALL)
-//                    .setMultiSelect(true)
-//                    .setUIProvider(new MyUIProvider())
-//                    .setSelectListener(selectedList -> {
-//                        Log.i("data_1", selectedList.toString());
-//                        EditDataManager.setList(selectedList);
-//                        Intent i = new Intent(this, ContentEditingActivity.class);
-//                        startActivity(i);
-//                    })
-//                    .open();
-//        });
 
         List<DMEntryBase> list;
         list = FeedManager.getTypeList();
@@ -167,7 +172,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         });
     }
 
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         List<DMEntryBase> list;
         list = FeedManager.getTypeList();
