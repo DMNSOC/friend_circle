@@ -1,0 +1,44 @@
+[versions]
+agp = "8.10.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.1"
+material = "1.12.0"
+activity = "1.10.1"
+constraintlayout = "2.2.1"
+recyclerview = "1.3.2"
+viewmodel = "2.6.1"
+livedata = "2.6.1"
+javalite = "3.24.3"
+okhttp = "4.10.0"
+glide = "4.16.0"
+exoplayer = "1.3.0"
+exoplayerui = "1.3.0"
+ucrop = "2.2.8"
+photoview = "2.3.0"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "viewmodel"}
+livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "livedata"}
+javalite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "javalite"}
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp"}
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
+exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "exoplayer"}
+exoplayerui = { group = "androidx.media3", name = "media3-ui", version.ref = "exoplayerui"}
+ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop"}
+photoview = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoview"}
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+
