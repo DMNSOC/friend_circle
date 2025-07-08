@@ -11,14 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.CeRibItemBinding;
+import com.g.friendcirclemodule.dialog.PDPlayerBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.mediaselector.model.ResourceItem;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
 
     private OnItemClickListener onItemClickListener;
     private ExoPlayer player;
+    List<PDPlayerBase> playerList = new ArrayList<>();
 
     public ImageGridAdapter(List<ResourceItem> mData) {
         this.mData = mData;
@@ -65,6 +69,7 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
                 MediaItem mediaItem = MediaItem.fromUri(item.path);
                 player.setMediaItem(mediaItem);
                 player.prepare();
+                playerList.add(new PDPlayerBase(player, position));
             }
         }
         // 点击事件

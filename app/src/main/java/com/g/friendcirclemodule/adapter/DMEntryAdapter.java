@@ -1,13 +1,19 @@
 package com.g.friendcirclemodule.adapter;
 
+import static android.content.Context.WINDOW_SERVICE;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -115,7 +121,25 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
             });
 
         } else {
+
             ItemViewHolder mfeb = (ItemViewHolder)holder;
+
+            WindowManager wm = (WindowManager) mfeb.binding.getRoot().getContext().getSystemService(WINDOW_SERVICE);
+            Point size = new Point();
+            wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
+            int width = size.x;
+//            int height = size.y;
+
+            if (size.x < size.y) {
+                width = size.x;
+            } else {
+                width = size.y;
+            }
+
+            ViewGroup.LayoutParams params = mfeb.binding.dmeaMain.getLayoutParams();
+            params.width = width; // 设置高度为200像素
+            mfeb.binding.dmeaMain.setLayoutParams(params);
+
             DMEntryBase dmEntryBase = mData.get(position - 1);
             // 设置缓存的头像信息
             List<DMEntryUseInfoBase> headInfoBaseList = FeedManager.getUseInfo(1, dmEntryBase.getUseId());

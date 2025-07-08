@@ -1,7 +1,11 @@
 package com.g.mediaselector.activity;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -34,9 +38,17 @@ public class ResourcePickerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Point size = new Point();
+        wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
+        int itemNum = 4;
+
+        itemNum = (int) Math.floor((double) size.x / 300);
+
         arpb = ActivityResourcePickerBinding.inflate(getLayoutInflater());
         setContentView(arpb.getRoot());
-        arpb.recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        arpb.recyclerView.setLayoutManager(new GridLayoutManager(this, itemNum));
         arpb.btnDone.setOnClickListener(v -> finishWithResult());
 
         tb = ToolbarBinding.inflate(getLayoutInflater());

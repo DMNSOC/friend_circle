@@ -1,7 +1,10 @@
 package com.g.friendcirclemodule.activity;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +44,14 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
     @Override
     protected void initView() {
+
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Point size = new Point();
+        wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
+        int itemNum = 4;
+
+        itemNum = (int) Math.floor((double) size.x / 400);
+
         viewbinding.ceBtnCancel.setOnClickListener(v -> {finish();});
         viewbinding.ceBtnPublish.setOnClickListener(v -> {
             Date data = new Date();
@@ -76,7 +87,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
         });
 
         if (type == 2) {
-            viewbinding.rvImages.setLayoutManager(new GridLayoutManager(this, 3));
+            viewbinding.rvImages.setLayoutManager(new GridLayoutManager(this, itemNum));
             adapter = new ImageGridAdapter(list);
             viewbinding.rvImages.setAdapter(adapter);
             adapter.notifyDataSetChanged();
