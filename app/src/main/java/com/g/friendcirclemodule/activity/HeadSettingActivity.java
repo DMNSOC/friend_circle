@@ -32,7 +32,7 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
     @Override
     protected void initView() {
         super.initView();
-
+        adjustCustomStatusBar(viewbinding.mainToolbar);
         List<DMEntryUseInfoBase> headInfoBaseList = FeedManager.getUseInfo(1, uId);
         if (!headInfoBaseList.isEmpty()) {
             DMEntryUseInfoBase dmEntryUseInfoBase = headInfoBaseList.get(0);
