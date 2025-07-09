@@ -79,7 +79,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                 }
             }
 
-            DMEntryBase dmEntryBase = new DMEntryBase(id, useId, dec, imagePath, time, videoPath, friendVideoTime);
+            DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime);
             FeedManager.InsertItemToAccounttb(dmEntryBase);
             finish();
         });

@@ -32,9 +32,9 @@
         </TextView>
         <TextView
             android:id="@+id/friend_entry_dec"
-            android:layout_width="260dp"
+            android:layout_width="290dp"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="hhhh"
             android:textSize="12dp"
             android:layout_below="@id/friend_entry_name"
             android:layout_alignLeft="@id/friend_entry_name"
@@ -48,17 +48,28 @@
             android:layout_below="@id/friend_entry_dec"
             android:paddingHorizontal="70dp">
         </androidx.recyclerview.widget.RecyclerView>
+
         <TextView
             android:id="@+id/friend_entry_time"
-            android:layout_width="260dp"
+            android:layout_width="290dp"
             android:layout_height="wrap_content"
-            android:text="1小时前"
-            android:textSize="8sp"
             android:layout_below="@id/main_rv_images"
             android:layout_alignLeft="@id/friend_entry_dec"
-            android:layout_marginTop="20dp"
-            >
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="21dp"
+            android:text="1小时前"
+            android:textSize="8sp">
         </TextView>
+
+        <ImageButton
+            android:id="@+id/friend_entry_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/more_horiz"
+            android:background="@color/transparent"
+            android:layout_alignRight="@id/friend_entry_time"
+            android:padding="5dp">
+        </ImageButton>
         <View
             android:layout_width="match_parent"
             android:layout_height="0.1dp"

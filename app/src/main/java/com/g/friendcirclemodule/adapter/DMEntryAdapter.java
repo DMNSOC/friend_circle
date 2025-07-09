@@ -2,16 +2,22 @@ package com.g.friendcirclemodule.adapter;
 
 import static android.content.Context.WINDOW_SERVICE;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
+
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.g.friendcirclemodule.R;
@@ -194,6 +200,27 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
                     list.add(a);
                 }
             }
+
+            mfeb.binding.friendEntryMore.setOnClickListener(v -> {
+                View popupView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.more_dialog, null);
+                PopupWindow popup = new PopupWindow(popupView, 150, 250, true);
+                popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                popup.setTouchable(true);
+                popup.setOutsideTouchable(true);
+                popup.showAsDropDown(mfeb.binding.friendEntryMore, -120, 0);
+                popupView.findViewById(R.id.more_like).setOnClickListener(v1 -> {
+                    popup.dismiss();
+                });
+                popupView.findViewById(R.id.more_delete).setOnClickListener(v1 -> {
+                    int click_id = dmEntryBase.getId();
+                    FeedManager.deleteItemFromAccounttbById(click_id);
+                    Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                    intent.putExtra("data_key", "更新数据");
+                    LocalBroadcastManager.getInstance(holder.itemView.getContext()).sendBroadcast(intent);
+                    popup.dismiss();
+                });
+            });
+
 
             MainImageGridAdapter adapter = new MainImageGridAdapter(list);
             mfeb.binding.mainRvImages.setAdapter(adapter);

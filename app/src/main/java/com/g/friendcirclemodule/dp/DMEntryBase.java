@@ -1,7 +1,7 @@
 package com.g.friendcirclemodule.dp;
 
 public class DMEntryBase {
-    long id;
+    int id;
     int useId;
     String decStr;
     String friendImageId;
@@ -9,7 +9,7 @@ public class DMEntryBase {
     String friendVideoId;
     String friendVideoTime;
 
-    public DMEntryBase(long id, int useId, String decStr, String friendImageId, String time, String friendVideoId, String friendVideoTime) {
+    public DMEntryBase(int id, int useId, String decStr, String friendImageId, String time, String friendVideoId, String friendVideoTime) {
         this.id = id;
         this.useId = useId;
         this.decStr = decStr;
@@ -19,11 +19,11 @@ public class DMEntryBase {
         this.friendVideoTime = friendVideoTime;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

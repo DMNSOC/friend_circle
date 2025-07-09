@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +22,7 @@ public class FeedManager {
         String sql = "SELECT * FROM accounttb ORDER BY id DESC";
         Cursor cursor = db.rawQuery(sql, null);
         while (cursor.moveToNext()) {
-            long id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
             int useId = cursor.getInt(cursor.getColumnIndexOrThrow("useId"));
             String decStr = cursor.getString(cursor.getColumnIndexOrThrow("decStr"));
             String friendImageId = cursor.getString(cursor.getColumnIndexOrThrow("friendImageId"));
@@ -60,6 +62,11 @@ public class FeedManager {
         values.put("friendVideoTime",bean.getFriendVideoTime());
         db.insert("accounttb", null,values);
     }
+
+    public static int deleteItemFromAccounttbById(int id) {
+        int i = db.delete("accounttb", "id=?", new String[]{id + ""});
+        return i;
+    };
 
     /*
     表插入
