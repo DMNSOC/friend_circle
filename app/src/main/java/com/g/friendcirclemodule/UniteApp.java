@@ -1,18 +1,9 @@
 package com.g.friendcirclemodule;
 
-import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Application;
 import android.content.ComponentCallbacks;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.g.friendcirclemodule.activity.MainActivity;
 import com.g.friendcirclemodule.dp.FeedManager;
 
 public class UniteApp extends Application {

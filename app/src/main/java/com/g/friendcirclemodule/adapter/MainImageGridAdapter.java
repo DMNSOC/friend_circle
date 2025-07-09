@@ -3,7 +3,6 @@ package com.g.friendcirclemodule.adapter;
 import static com.g.friendcirclemodule.activity.MainActivity.hostActivity;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +44,6 @@ public class MainImageGridAdapter extends BaseAdapter<ResourceItem> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MainImageGridAdapter.ViewHolder vh = (MainImageGridAdapter.ViewHolder)holder;
         ResourceItem item = mData.get(position);
-        Log.i("type_1122", String.valueOf(item.type));
         ViewGroup.LayoutParams params = vh.binding.ceRib.getLayoutParams();
         vh.binding.playerView.setVisibility(View.GONE);
         vh.binding.ivImage.setVisibility(View.VISIBLE);
@@ -64,8 +62,8 @@ public class MainImageGridAdapter extends BaseAdapter<ResourceItem> {
                 if (widthStr != null && heightStr != null) {
                     int width = Integer.parseInt(widthStr);
                     int height = Integer.parseInt(heightStr);
-                    params.width = UtilityMethod.pxToDp(hostActivity.getBaseContext(), width);
-                    params.height = UtilityMethod.pxToDp(hostActivity.getBaseContext(), height);
+                    params.width = UtilityMethod.pxToDp(hostActivity.getBaseContext(), width * 2);
+                    params.height = UtilityMethod.pxToDp(hostActivity.getBaseContext(), height * 2);
                 }
                 try {
                     retriever.release();

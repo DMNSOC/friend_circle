@@ -6,18 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +43,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("dtata" , String.valueOf(FeedManager.getTypeList()));
         if (!isReceiverRegistered) {
             LocalBroadcastManager.getInstance(this) // 注册广播接收器
                     .registerReceiver(receiver, new IntentFilter("ACTION_DIALOG_CLOSED"));
@@ -72,7 +65,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             if ("ACTION_DIALOG_CLOSED".equals(intent.getAction())) {
-                Log.i("dtata" , "111111");
                 onResume();
             }
         }
@@ -113,7 +105,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                     .setMultiSelect(true)
                                     .setUIProvider(new MyUIProvider())
                                     .setSelectListener(selectedList -> {
-                                        Log.i("data_1", selectedList.toString());
                                         EditDataManager.setList(selectedList);
                                         Bundle bundle = new Bundle();
                                         bundle.putInt("TYPE", 2);

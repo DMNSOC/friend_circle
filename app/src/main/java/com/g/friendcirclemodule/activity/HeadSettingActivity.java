@@ -5,13 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
-
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.ActivityHeadSettingBinding;
-import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
@@ -36,7 +32,6 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
         List<DMEntryUseInfoBase> headInfoBaseList = FeedManager.getUseInfo(1, uId);
         if (!headInfoBaseList.isEmpty()) {
             DMEntryUseInfoBase dmEntryUseInfoBase = headInfoBaseList.get(0);
-            Log.i("dddddd", String.valueOf(dmEntryUseInfoBase.getFriendHead()));
             if (dmEntryUseInfoBase.getFriendHead() != "" && dmEntryUseInfoBase.getFriendHead() != null) {
                 Bitmap useHeadBitmap = null;
                 try {

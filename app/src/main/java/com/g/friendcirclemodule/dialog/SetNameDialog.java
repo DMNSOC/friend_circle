@@ -5,18 +5,9 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.WindowMetrics;
-import android.view.inputmethod.InputMethodManager;
-
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
@@ -39,7 +30,6 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
         });
         viewbinding.setNameBtnEnsure.setOnClickListener(v -> {
             String name = String.valueOf(viewbinding.setNameEt.getText());
-            Log.i("dddddd", name);
             DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(2, uId,name, "");
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             cancel();
@@ -79,7 +69,6 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
 
                 // 计算键盘高度
                 int keyboardHeight = screenHeight - r.bottom;
-                Log.i("222222222", String.valueOf(screenHeight) + "=======" + r.bottom);
                 // 判断键盘是否弹出
                 if (screenHeight == 452 && r.bottom <= 2200) { // 键盘弹出（阈值可以根据设备调整）
                     viewbinding.getRoot().setPadding(0, 0, 0, 1076); // 上移 Dialog

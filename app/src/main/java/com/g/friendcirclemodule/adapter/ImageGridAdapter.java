@@ -1,6 +1,5 @@
 package com.g.friendcirclemodule.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import com.g.friendcirclemodule.databinding.CeRibItemBinding;
 import com.g.friendcirclemodule.dialog.PDPlayerBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.mediaselector.model.ResourceItem;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,6 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
 
     public ImageGridAdapter(List<ResourceItem> mData) {
         this.mData = mData;
-        Log.i("22222", String.valueOf(this.mData));
     }
 
     // 主ViewHolder
@@ -55,7 +52,6 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
             vh.binding.ivImage.setImageResource(R.mipmap.add);
         } else {
             ResourceItem item = this.mData.get(position);
-            Log.i("type_1122", String.valueOf(item.type));
             if (item.type == ResourceItem.TYPE_IMAGE) {
                 Glide.with(vh.binding.getRoot()).load(item.path).into(vh.binding.ivImage); // Glide加载
             } else {
@@ -120,7 +116,6 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
             player = null;
         }
     }
-
 
 }
 

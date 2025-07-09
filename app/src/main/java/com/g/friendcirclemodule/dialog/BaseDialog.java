@@ -4,22 +4,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.viewbinding.ViewBinding;
-
 import com.g.friendcirclemodule.interface_method.BaseBindingInterface;
-
 import java.lang.reflect.Field;
 
 public class BaseDialog<VB extends ViewBinding,VM extends ViewModel> extends Dialog implements BaseBindingInterface<VB, VM> {
@@ -62,7 +55,6 @@ public class BaseDialog<VB extends ViewBinding,VM extends ViewModel> extends Dia
         Window window = getWindow();
 
         WindowManager.LayoutParams wlp = window.getAttributes();
-        Log.i("heightt", String.valueOf(wlp.height));
 
         WindowMetrics windowMetrics = window.getWindowManager().getCurrentWindowMetrics();
         Rect bounds = windowMetrics.getBounds();

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +59,6 @@ public class FeedManager {
         values.put("friendVideoId",bean.getFriendVideoId());
         values.put("friendVideoTime",bean.getFriendVideoTime());
         db.insert("accounttb", null,values);
-        Log.i("dataLog", "插入：" + values);
     }
 
     /*
@@ -77,7 +75,6 @@ public class FeedManager {
             values.put("friendHead",bean.getFriendHead());
         }
         db.insertWithOnConflict("userinfo", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-        Log.i("dataLog", "插入：" + values);
     }
 
 

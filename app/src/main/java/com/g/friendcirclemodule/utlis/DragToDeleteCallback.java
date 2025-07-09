@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.utlis;
 
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -59,7 +58,6 @@ public class DragToDeleteCallback extends ItemTouchHelper.Callback {
         int itemY = itemLocation[1] + viewHolder.itemView.getHeight() / 2;
 
         // 判断是否在删除区域
-        Log.i("idddd", String.valueOf(isOverDeleteArea));
         if (isCurrentlyActive) {
             deleteArea.setVisibility(View.VISIBLE);
             isOverDeleteArea = ((itemX >= deleteAreaLocation[0]) &&
@@ -79,8 +77,6 @@ public class DragToDeleteCallback extends ItemTouchHelper.Callback {
     public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
 
-        Log.i("idddd", String.valueOf(viewHolder.getBindingAdapterPosition()));
-        Log.i("idddd", String.valueOf(isOverDeleteArea));
         deleteArea.setVisibility(View.GONE);
         if (isOverDeleteArea) {
             adapter.removeItem(viewHolder.getBindingAdapterPosition());

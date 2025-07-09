@@ -2,9 +2,7 @@ package com.g.friendcirclemodule.activity;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
-
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -109,7 +107,6 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                     .setMultiSelect(true)
                     .setUIProvider(new MyUIProvider())
                     .setSelectListener(selectedList -> {
-                        Log.i("data_1", selectedList.toString());
                         EditDataManager.addList(selectedList);
                         onResume();
                     })
@@ -121,7 +118,6 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
     protected void onResume() {
         super.onResume();
         if (type == 2) {
-            Log.i("datass", String.valueOf(EditDataManager.getList()));
             list.clear();
             list.addAll(EditDataManager.getList());
             adapter.notifyDataSetChanged();

@@ -5,9 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.inputmethod.InputMethodManager;
-
 import androidx.annotation.NonNull;
-
 import java.lang.ref.WeakReference;
 
 public class SafeHandler extends Handler {

@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;

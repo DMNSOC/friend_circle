@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.dialog;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;

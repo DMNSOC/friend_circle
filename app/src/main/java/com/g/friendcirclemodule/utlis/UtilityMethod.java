@@ -1,12 +1,6 @@
 package com.g.friendcirclemodule.utlis;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
-
-import androidx.core.content.FileProvider;
-
-import java.io.File;
 
 public class UtilityMethod {
     public static String formatDuration(long durationMs) {

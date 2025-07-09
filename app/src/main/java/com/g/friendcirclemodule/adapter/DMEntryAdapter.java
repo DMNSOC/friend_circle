@@ -1,19 +1,16 @@
 package com.g.friendcirclemodule.adapter;
 
 import static android.content.Context.WINDOW_SERVICE;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +23,6 @@ import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.mediaselector.model.ResourceItem;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +124,6 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
             Point size = new Point();
             wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
             int width = size.x;
-//            int height = size.y;
 
             if (size.x < size.y) {
                 width = size.x;
@@ -207,9 +202,6 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
                 bundle.putString("PATH", list.get(position1).path);
                 bundle.putInt("TYPE", list.get(position1).type);
                 Context context = MainActivity.hostActivity;
-//                FullScreenDialog moreDialog = new FullScreenDialog(context, bundle);
-//                moreDialog.show();
-//                moreDialog.setDialogSize();
                 PreviewDialog dialog = new PreviewDialog(context, list, position1);
                 dialog.show();
                 dialog.setDialogSize();

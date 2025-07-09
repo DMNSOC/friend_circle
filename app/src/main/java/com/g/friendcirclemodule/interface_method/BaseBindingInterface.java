@@ -1,12 +1,7 @@
 package com.g.friendcirclemodule.interface_method;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-
-import androidx.core.app.DialogCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
@@ -55,7 +50,6 @@ public interface BaseBindingInterface<VB extends ViewBinding,VM extends ViewMode
                             vmClass = (Class<VM>) pt.getActualTypeArguments()[1];
                         }
                     }
-                    Log.i("222222", String.valueOf(vmClass));
                     if (vmClass != null) {
                         FragmentActivity mActivity = null;
                         if (instance instanceof Fragment) {
@@ -69,7 +63,6 @@ public interface BaseBindingInterface<VB extends ViewBinding,VM extends ViewMode
                     }
                 }
                 if (result != null) {
-                    Log.i("222222", String.valueOf(result));
                     binding.setAccessible(true);
                     binding.set(instance, result);
                 }

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import com.g.mediaselector.model.ResourceFolder;
 import com.g.mediaselector.model.ResourceItem;
 import java.io.File;
@@ -70,7 +69,6 @@ public class MediaStoreUtils {
                         int type = c.getInt(2) == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE ?
                                 ResourceItem.TYPE_IMAGE : ResourceItem.TYPE_VIDEO;
                         long duration = c.isNull(3) ? 0 : c.getLong(3);
-                        Log.i("dddddd", String.valueOf(itemUri));
                         result.add(new ResourceItem(id, path, type, duration, itemUri));
                     }
                 }
