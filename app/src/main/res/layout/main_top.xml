@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_top"
     android:layout_width="match_parent"
     android:layout_height="300dp"
     android:background="@color/white">
@@ -10,7 +11,24 @@
         android:scaleType="centerCrop"
         android:src="@mipmap/bz1">
     </ImageView>
+    <Button
+        android:visibility="gone"
+        android:id="@+id/main_images"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:background="@color/transparent"
+        android:clipToOutline="true"
+        android:drawableTop="@mipmap/image"
+        android:drawablePadding="-10dp"
+        android:text="更换资源"
+        android:textSize="8sp"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/main_top_bg"
+        android:layout_marginBottom="-10dp"
+        android:layout_marginRight="20dp">
+    </Button>
     <RelativeLayout
+        android:id="@+id/main_head_name"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:layout_alignBottom="@id/main_top_bg"

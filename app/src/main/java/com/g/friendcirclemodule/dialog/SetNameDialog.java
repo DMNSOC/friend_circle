@@ -30,7 +30,7 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
         });
         viewbinding.setNameBtnEnsure.setOnClickListener(v -> {
             String name = String.valueOf(viewbinding.setNameEt.getText());
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(2, uId,name, "");
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(2, uId,name, "", "");
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             cancel();
         });

@@ -5,8 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import androidx.annotation.Nullable;
-import com.g.friendcirclemodule.R;
-import com.g.friendcirclemodule.databinding.ActivityHeadSettingBinding;
+import com.g.friendcirclemodule.databinding.ActivityBgReplaceMoreBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
@@ -15,53 +14,30 @@ import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.yalantis.ucrop.UCrop;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
-public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding, BaseModel> {
+public class BgReplaceMoreActivity extends BaseActivity<ActivityBgReplaceMoreBinding, BaseModel> {
 
     int uId = 1;
-    Uri htUri = Uri.parse("");
-
     @Override
     protected void initView() {
         super.initView();
         adjustCustomStatusBar(viewbinding.mainToolbar);
-        List<DMEntryUseInfoBase> headInfoBaseList = FeedManager.getUseInfo(1, uId);
-        if (!headInfoBaseList.isEmpty()) {
-            DMEntryUseInfoBase dmEntryUseInfoBase = headInfoBaseList.get(0);
-            if (dmEntryUseInfoBase.getFriendHead() != "" && dmEntryUseInfoBase.getFriendHead() != null) {
-                Bitmap useHeadBitmap = null;
-                try {
-                    useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                viewbinding.headTx.setImageBitmap(useHeadBitmap);
-            } else {
-                viewbinding.headTx.setImageResource(R.mipmap.tx);
-            }
-        } else {
-            viewbinding.headTx.setImageResource(R.mipmap.tx);
-        }
-
-        viewbinding.mainBtnBack.setOnClickListener(v -> {finish();});
-        viewbinding.mainBtnFolder.setOnClickListener(v -> {
+        viewbinding.mainBtnBack.setOnClickListener(v -> {
+            finish();
+        });
+        viewbinding.btnReplace.setOnClickListener(v -> {
             new PhotoLibrary.Builder(this)
                     .setMode(PhotoLibrary.MODE_IMAGE)
                     .setMultiSelect(false)
                     .setUIProvider(new MyUIProvider())
                     .setSelectListener(selectedList -> {
-                        startCropActivity(selectedList.get(0).uri);
+                            startCropActivity(selectedList.get(0).uri);
                     })
                     .open();
-        });
 
-        viewbinding.headBtnSet.setOnClickListener(v -> {
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(1, uId,"", String.valueOf(htUri), "");
-            FeedManager.InsertItemToUserInfo(dmEntryBase);
-            finish();
+
         });
     }
 
@@ -80,14 +56,14 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
     // 启动裁切工具
     private void startCropActivity(Uri sourceUri) {
         // 设置裁切后的输出路径
-        File destinationFile = new File(getCacheDir(), "useHead_image.jpg");
+        File destinationFile = new File(getCacheDir(), "useCover_image.jpg");
         Uri destinationUri = Uri.fromFile(destinationFile);
         // 配置裁切工具
         UCrop uCrop = UCrop.of(sourceUri, destinationUri);
         // 设置裁切的宽高比例为 1:1 (正方形)
-        uCrop.withAspectRatio(1, 1);
+        uCrop.withAspectRatio(1, 2);
         // 设置裁切后的图片最大宽高
-        uCrop.withMaxResultSize(500, 500);
+        uCrop.withMaxResultSize(690, 1490);
         // 启动裁切工具
         uCrop.start(this);
     }
@@ -96,10 +72,10 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
     private void handleUseHeadImage(Uri useHeadUri) {
         try {
             Bitmap useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(useHeadUri));
-            htUri = useHeadUri;
-            viewbinding.headTx.setImageBitmap(useHeadBitmap);
-            UtilityMethod.saveBitmapToDirectory(useHeadBitmap, this, "Head");
-
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(3, uId,"", "", String.valueOf(useHeadUri));
+            FeedManager.InsertItemToUserInfo(dmEntryBase);
+            UtilityMethod.saveBitmapToDirectory(useHeadBitmap, this, "Cover");
+            finish();
         } catch (IOException ignored) {}
     }
 }

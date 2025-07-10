@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +41,8 @@ public class FeedManager {
             int useId = cursor.getInt(cursor.getColumnIndexOrThrow("useId"));
             String friendName = cursor.getString(cursor.getColumnIndexOrThrow("friendName"));
             String friendHead = cursor.getString(cursor.getColumnIndexOrThrow("friendHead"));
-            DMEntryUseInfoBase typeBean = new DMEntryUseInfoBase(id, useId, friendName, friendHead);
+            String friendBg = cursor.getString(cursor.getColumnIndexOrThrow("friendBg"));
+            DMEntryUseInfoBase typeBean = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
             list.add(typeBean);
         }
         return list;
@@ -80,6 +79,9 @@ public class FeedManager {
         }
         if (!Objects.equals(bean.getFriendHead(), "")) {
             values.put("friendHead",bean.getFriendHead());
+        }
+        if (!Objects.equals(bean.getFriendBg(), "")) {
+            values.put("friendBg",bean.getFriendBg());
         }
         db.insertWithOnConflict("userinfo", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }

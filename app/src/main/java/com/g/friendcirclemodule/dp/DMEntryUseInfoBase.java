@@ -5,13 +5,15 @@ public class DMEntryUseInfoBase {
     int useId;
     String friendName;
     String friendHead;
+    String friendBg;
 
-    // id 1 为头像 2 为昵称
-    public DMEntryUseInfoBase(long id, int useId, String friendName, String friendHead) {
+    // id 1 为头像 2 为昵称 3 为背景
+    public DMEntryUseInfoBase(long id, int useId, String friendName, String friendHead, String friendBg) {
         this.id = id;
         this.useId = useId;
         this.friendName = friendName;
         this.friendHead = friendHead;
+        this.friendBg = friendBg;
 
     }
 
@@ -45,5 +47,13 @@ public class DMEntryUseInfoBase {
 
     public void setFriendHead(String friendHead) {
         this.friendHead = friendHead;
+    }
+
+    public String getFriendBg() {
+        return friendBg;
+    }
+
+    public void setFriendBg(String friendBg) {
+        this.friendBg = friendBg;
     }
 }

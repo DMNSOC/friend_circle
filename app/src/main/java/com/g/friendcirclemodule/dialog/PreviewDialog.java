@@ -8,7 +8,6 @@ import com.g.friendcirclemodule.adapter.PreviewPagerAdapter;
 import com.g.friendcirclemodule.databinding.PreviewDialogBinding;
 import com.g.friendcirclemodule.model.BaseModel;
 import com.g.mediaselector.model.ResourceItem;
-
 import java.util.List;
 import java.util.Objects;
 

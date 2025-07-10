@@ -1,6 +1,8 @@
 package com.g.friendcirclemodule.adapter;
 
 import static android.content.Context.WINDOW_SERVICE;
+import static com.g.friendcirclemodule.activity.MainActivity.hostActivity;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,24 +12,26 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
-
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.g.friendcirclemodule.R;
-import com.g.friendcirclemodule.activity.MainActivity;
+import com.g.friendcirclemodule.activity.BgReplaceMoreActivity;
 import com.g.friendcirclemodule.databinding.MainFriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
 import com.g.friendcirclemodule.dialog.PreviewDialog;
 import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
+import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.model.ResourceItem;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -115,7 +119,73 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
                 hvh.binding.mainTopName.setText(R.string.user_name);
             }
 
+            // 设置缓存的封面
+            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(3, 1);
+            if (!coverInfoBaseList.isEmpty()) {
+                DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
+                if (dmEntryUseInfoBase.getFriendBg() != "" && dmEntryUseInfoBase.getFriendBg() != null) {
+                    Bitmap croppedBitmap = null;
+                    try {
+                        croppedBitmap = BitmapFactory.decodeStream(hvh.binding.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendBg())));
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    hvh.binding.mainTopBg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    hvh.binding.mainTopBg.setImageBitmap(croppedBitmap);
+                } else {
+                    hvh.binding.mainTopBg.setImageResource(R.mipmap.bz1);
+                }
+            } else {
+                hvh.binding.mainTopBg.setImageResource(R.mipmap.bz1);
+            }
+
+
             // 点击事件
+            hvh.binding.getRoot().setOnClickListener(v -> {
+                ViewGroup.LayoutParams params1 = hvh.binding.mainTop.getLayoutParams();
+                ViewGroup.LayoutParams params2 = hvh.binding.mainTopBg.getLayoutParams();
+                int dp = UtilityMethod.pxToDp(hvh.binding.getRoot().getContext(), params1.height);
+                int px1 = 0;
+                int px2 = 0;
+
+                if (dp == 600) {
+                    hvh.binding.mainImages.setVisibility(View.GONE);
+                    hvh.binding.mainHeadName.setVisibility(View.VISIBLE);
+                    px1 = UtilityMethod.dpToPx(hvh.binding.getRoot().getContext(), 300);
+                    px2 = UtilityMethod.dpToPx(hvh.binding.getRoot().getContext(), 240);
+                } else {
+                    hvh.binding.mainHeadName.setVisibility(View.GONE);
+                    hvh.binding.mainImages.setVisibility(View.VISIBLE);
+                    px1 = UtilityMethod.dpToPx(hvh.binding.getRoot().getContext(), 600);
+                    px2 = UtilityMethod.dpToPx(hvh.binding.getRoot().getContext(), 540);
+                }
+                Log.i("dddddddd", px1 + "=====" + px2 + "========" +hvh.binding.mainTop.getHeight());
+
+                ValueAnimator heightAnim1 = ValueAnimator.ofInt(hvh.binding.mainTop.getHeight(), px1);
+                heightAnim1.addUpdateListener(animation -> {
+                    params1.height = (int) animation.getAnimatedValue();
+                    hvh.binding.mainTop.setLayoutParams(params1);
+                    hvh.binding.mainTop.requestLayout(); // 强制刷新布局
+                });
+                heightAnim1.setDuration(500).start();
+
+                ValueAnimator heightAnim2 = ValueAnimator.ofInt(hvh.binding.mainTopBg.getHeight(), px2);
+                heightAnim2.addUpdateListener(animation -> {
+                    params2.height = (int) animation.getAnimatedValue();
+                    hvh.binding.mainTopBg.setLayoutParams(params2);
+                    hvh.binding.mainTopBg.requestLayout(); // 强制刷新布局
+                });
+                heightAnim2.setDuration(500).start();
+
+            });
+
+            hvh.binding.mainImages.setOnClickListener(v -> {
+
+                Intent i = new Intent(hostActivity, BgReplaceMoreActivity.class);
+                hostActivity.startActivity(i);
+            });
+
             hvh.binding.mainTopTx.setOnClickListener(view -> {
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClickListener(hvh);
@@ -125,12 +195,10 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
         } else {
 
             ItemViewHolder mfeb = (ItemViewHolder)holder;
-
             WindowManager wm = (WindowManager) mfeb.binding.getRoot().getContext().getSystemService(WINDOW_SERVICE);
             Point size = new Point();
             wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
             int width = size.x;
-
             if (size.x < size.y) {
                 width = size.x;
             } else {
@@ -228,7 +296,7 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
                 Bundle bundle = new Bundle();
                 bundle.putString("PATH", list.get(position1).path);
                 bundle.putInt("TYPE", list.get(position1).type);
-                Context context = MainActivity.hostActivity;
+                Context context = hostActivity;
                 PreviewDialog dialog = new PreviewDialog(context, list, position1);
                 dialog.show();
                 dialog.setDialogSize();
