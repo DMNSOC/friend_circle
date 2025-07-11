@@ -2,8 +2,11 @@ package com.g.mediaselector.activity;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -61,6 +64,21 @@ public class ResourcePickerActivity extends AppCompatActivity {
             return;
         }
         loadData();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionUtils.REQUEST_CODE && grantResults.length > 0) {
+            Log.i("testtttt", "222222");
+            // 权限被授予，重新加载数据
+            loadData();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void loadData() {

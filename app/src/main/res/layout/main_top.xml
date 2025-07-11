@@ -8,8 +8,7 @@
         android:id="@+id/main_top_bg"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/bz1">
+        android:scaleType="centerCrop">
     </ImageView>
     <Button
         android:visibility="gone"
@@ -20,7 +19,7 @@
         android:clipToOutline="true"
         android:drawableTop="@mipmap/image"
         android:drawablePadding="-10dp"
-        android:text="更换资源"
+        android:text="@string/modify_cover_title"
         android:textSize="8sp"
         android:layout_alignParentRight="true"
         android:layout_alignBottom="@id/main_top_bg"
@@ -39,7 +38,6 @@
             android:layout_height="80dp"
             android:background="@drawable/rounded_image"
             android:clipToOutline="true"
-            android:src="@mipmap/tx"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp">
         </ImageView>
@@ -47,7 +45,7 @@
             android:id="@+id/main_top_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="欣欣子"
+            android:text=""
             android:textStyle="bold"
             android:textColor="@color/white"
             android:layout_toLeftOf="@id/main_top_tx"

@@ -23,7 +23,7 @@
             android:id="@+id/main_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="更换封面"
+            android:text="@string/modify_cover_title"
             android:textColor="@color/black"
             android:layout_gravity="center"
             android:textStyle="bold"
@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="更换头像"
+                    android:text="@string/modify_cover_btn_1"
                     android:padding="10dp"
                     android:textStyle="bold"
                     android:background="@color/white"

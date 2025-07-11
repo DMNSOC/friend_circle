@@ -16,7 +16,7 @@
             android:id="@+id/ce_btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="取消"
+            android:text="@string/btn_cancel"
             android:textStyle="bold"
             android:textSize="15sp"
             android:layout_alignParentLeft="true"
@@ -27,7 +27,7 @@
             android:id="@+id/ce_btn_publish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发表"
+            android:text="@string/btn_release"
             android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="@color/white"
@@ -48,7 +48,7 @@
             android:id="@+id/ce_describe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="今日感悟～"
+            android:hint="@string/dec_tips"
             android:background="@null"
             android:paddingHorizontal="30dp">
         </EditText>

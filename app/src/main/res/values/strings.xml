@@ -2,4 +2,19 @@
     <string name="app_name">朋友圈</string>
     <string name="user_name">PumPkin</string>
     <string name="entry_time">发布时间 %1$s</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_release">发布</string>
+    <string name="btn_complete">完成</string>
+    <string name="dec_tips">今日感悟～</string>
+    <string name="btn_delete">删除</string>
+    <string name="btn_like">点赞</string>
+    <string name="modify_btn_name">更换名字</string>
+    <string name="modify_btn_head">更换头像</string>
+    <string name="modify_name_title">修改名称</string>
+    <string name="modify_name_dec_tips">输入新名称</string>
+    <string name="modify_head_title">个人头像</string>
+    <string name="modify_head_btn">设置头像</string>
+    <string name="modify_cover_title">更换封面</string>
+    <string name="modify_cover_btn_1">本地图库</string>
+
 </resources>
