@@ -3,8 +3,7 @@
     android:id="@+id/set_name"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:background="@color/white">
+    android:padding="10dp">
     <TextView
         android:id="@+id/set_name_tv"
         android:layout_width="wrap_content"
@@ -21,8 +20,7 @@
         android:hint="@string/modify_name_dec_tips"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
-        android:textSize="14sp"
-        android:background="@color/white">
+        android:textSize="14sp">
         <requestFocus/>
     </EditText>
     <LinearLayout
@@ -40,7 +38,7 @@
             android:background="@drawable/btn_style"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:layout_marginRight="5dp">
+            android:layout_marginEnd="5dp">
         </Button>
         <Button
             android:id="@+id/set_name_btn_ensure"
@@ -51,7 +49,7 @@
             android:background="@drawable/btn_green_style"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:layout_marginRight="5dp">
+            android:layout_marginEnd="5dp">
         </Button>
     </LinearLayout>
 

@@ -103,6 +103,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             new PhotoLibrary.Builder(hostActivity)
                                     .setMode(PhotoLibrary.MODE_ALL)
                                     .setMultiSelect(true)
+                                    .setSelectNum(6)
                                     .setUIProvider(new MyUIProvider())
                                     .setSelectListener(selectedList -> {
                                         EditDataManager.setList(selectedList);

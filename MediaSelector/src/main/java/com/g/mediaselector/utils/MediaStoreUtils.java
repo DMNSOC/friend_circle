@@ -98,7 +98,7 @@ public class MediaStoreUtils {
             Objects.requireNonNull(folderMap.get(parent)).items.add(item);
         }
 
-        ResourceFolder all = new ResourceFolder("全部", "/");
+        ResourceFolder all = new ResourceFolder("ALL", "/");
         all.items.addAll(allItems);
         if (!all.items.isEmpty()) all.coverPath = all.items.get(0).path;
         folders.add(all);

@@ -14,7 +14,6 @@ import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.yalantis.ucrop.UCrop;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class BgReplaceMoreActivity extends BaseActivity<ActivityBgReplaceMoreBinding, BaseModel> {

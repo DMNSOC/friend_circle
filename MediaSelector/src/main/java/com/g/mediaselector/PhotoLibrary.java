@@ -16,7 +16,7 @@ public class PhotoLibrary {
         private final Context context;
         private int mode = MODE_IMAGE;
         private boolean multiSelect = false;
-        private String topBarName = "";
+        private int selectNum = 0;
         private ResourceUIProvider uiProvider;
         private OnResourceSelectListener selectListener;
 
@@ -33,8 +33,8 @@ public class PhotoLibrary {
             this.multiSelect = multiSelect;
             return this;
         }
-        public Builder setTopBarName(String topBarName) {
-            this.topBarName = topBarName;
+        public Builder setSelectNum(int selectNum) {
+            this.selectNum = selectNum;
             return this;
         }
         public Builder setUIProvider(ResourceUIProvider provider) {
@@ -52,6 +52,7 @@ public class PhotoLibrary {
             ResourcePickerActivity.staticUIProvider = uiProvider;
             ResourcePickerActivity.staticMode = mode;
             ResourcePickerActivity.staticMulti = multiSelect;
+            ResourcePickerActivity.selectNum = selectNum;
             Intent i = new Intent(context, ResourcePickerActivity.class);
             context.startActivity(i);
         }

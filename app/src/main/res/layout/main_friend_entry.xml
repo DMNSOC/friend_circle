@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
     <RelativeLayout
         android:id="@+id/dmea_main"
         android:layout_width="wrap_content"
@@ -15,16 +14,16 @@
             android:background="@drawable/rounded_image"
             android:clipToOutline="true"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp">
+            android:layout_marginStart="20dp">
         </ImageView>
         <TextView
             android:id="@+id/friend_entry_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:layout_toRightOf="@id/friend_entry_head"
+            android:layout_toEndOf="@id/friend_entry_head"
             android:layout_alignTop="@id/friend_entry_head"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textStyle="bold"
             android:textSize="14sp"
             >
@@ -34,9 +33,9 @@
             android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:layout_below="@id/friend_entry_name"
-            android:layout_alignLeft="@id/friend_entry_name"
+            android:layout_alignStart="@id/friend_entry_name"
             >
         </TextView>
         <androidx.recyclerview.widget.RecyclerView
@@ -53,11 +52,10 @@
             android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/main_rv_images"
-            android:layout_alignLeft="@id/friend_entry_dec"
-            android:layout_marginLeft="0dp"
+            android:layout_alignStart="@id/friend_entry_dec"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="21dp"
-            android:text="1小时前"
-            android:textSize="8sp">
+            android:textSize="11sp">
         </TextView>
 
         <ImageButton
@@ -66,7 +64,7 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/more_horiz"
             android:background="@color/transparent"
-            android:layout_alignRight="@id/friend_entry_time"
+            android:layout_alignEnd="@id/friend_entry_time"
             android:padding="5dp">
         </ImageButton>
         <RelativeLayout
@@ -74,7 +72,7 @@
             android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/friend_entry_time"
-            android:layout_alignLeft="@id/friend_entry_dec"
+            android:layout_alignStart="@id/friend_entry_dec"
             android:layout_marginTop="10dp"
             android:background="@drawable/grey_backdrop">
             <ImageView
@@ -88,9 +86,9 @@
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:text="222222222222222222222222222222222222222222222222222222222222222"
+                android:text=""
                 android:textColor="@color/grey_7D7D7D"
-                android:layout_toRightOf="@id/catalogs_favorite_image"
+                android:layout_toEndOf="@id/catalogs_favorite_image"
                 android:layout_marginTop="2dp">
             </TextView>
         </RelativeLayout>

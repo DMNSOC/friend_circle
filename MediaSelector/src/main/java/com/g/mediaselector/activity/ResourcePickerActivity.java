@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+
+import com.g.mediaselector.R;
 import com.g.mediaselector.adapter.ResourceAdapter;
 import com.g.mediaselector.dialog.FolderListDialog;
 import com.g.mediaselector.interface_method.OnResourceSelectListener;
@@ -29,12 +32,14 @@ public class ResourcePickerActivity extends AppCompatActivity {
     public static ResourceUIProvider staticUIProvider;
     public static int staticMode = 1;
     public static boolean staticMulti = false;
+    public static int selectNum = 1;
     private final List<ResourceItem> selected = new ArrayList<>();
     private List<ResourceItem> allItems = new ArrayList<>();
     private List<ResourceFolder> folderList = new ArrayList<>();
     private ResourceFolder currentFolder;
     ActivityResourcePickerBinding arpb;
     ToolbarBinding tb;
+    int select = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +107,13 @@ public class ResourcePickerActivity extends AppCompatActivity {
         adapter.setOnItemClickListener((view, position) -> {
             ResourceItem item = data.get(position);
             if (staticMulti) {
+                if (selected.contains(item)) select = select - 1;
+                else select = select + 1;
+                if (select > selectNum) {
+                    select = selectNum;
+                    Toast.makeText(this, getString(R.string.select_num, String.valueOf(selectNum)), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (selected.contains(item)) selected.remove(item);
                 else selected.add(item);
                 adapter.notifyItemChanged(position);
