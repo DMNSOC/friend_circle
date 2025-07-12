@@ -35,6 +35,7 @@ import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.model.ResourceItem;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +44,8 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
     private static final int TYPE_ITEM = 1;
 
     private OnItemClickListener onItemClickListener;
+    public PreviewDialog dialog;
+    MainImageGridAdapter adapter;
 
     public DMEntryAdapter(List<DMEntryBase> mData) {
         this.mData = mData;
@@ -249,6 +252,47 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
             mfeb.binding.friendEntryTime.setText(mfeb.binding.getRoot().getContext().getString(R.string.entry_time, String.valueOf(dmEntryBase.getTime())));
             mfeb.binding.mainRvImages.setLayoutManager(new GridLayoutManager(holder.itemView.getContext(), 3));
 
+            mfeb.binding.catalogsList.setVisibility(View.GONE);
+
+            if (!Objects.equals(dmEntryBase.getLikesId(), "")) {
+                String likesId = dmEntryBase.getLikesId();
+                String[] likesArr = likesId.split(",");  // 按逗号分割
+                if (likesArr.length > 0) {
+                    mfeb.binding.catalogsList.setVisibility(View.VISIBLE);
+                    String str = "";
+                    Log.i("testtttt", str);
+                    Log.i("testtttt", Arrays.toString(likesArr));
+                    for (String s : likesArr) {
+                        List<DMEntryUseInfoBase> NIBL = FeedManager.getUseInfo(2, Integer.parseInt(s));
+                        Log.i("testtttt", str);
+                        if (!NIBL.isEmpty()) {
+                            Log.i("testtttt", str);
+                            DMEntryUseInfoBase dmEntryUseInfoBase = NIBL.get(0);
+                            if (dmEntryUseInfoBase.getFriendName() != "" && dmEntryUseInfoBase.getFriendName() != null) {
+                                if (Objects.equals(str, "")) {
+                                    str = dmEntryUseInfoBase.getFriendName();
+                                } else {
+                                    str = str + "、" + dmEntryUseInfoBase.getFriendName();
+                                }
+                            } else {
+                                if (Objects.equals(str, "")) {
+                                    str = holder.itemView.getContext().getString(R.string.user_name);
+                                } else {
+                                    str = str + "、" + holder.itemView.getContext().getString(R.string.user_name);
+                                }
+                            }
+                        } else {
+                            if (Objects.equals(str, "")) {
+                                str = holder.itemView.getContext().getString(R.string.user_name);
+                            } else {
+                                str = str + "、" + holder.itemView.getContext().getString(R.string.user_name);
+                            }
+                        }
+                    }
+                    mfeb.binding.catalogsText.setText(str);
+                }
+            }
+
             String imageStr = dmEntryBase.getFriendImageId();
             String[] imageArr = imageStr.split(",");  // 按逗号分割
             List<ResourceItem> list = new ArrayList<>();
@@ -269,17 +313,64 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
                 }
             }
 
+            View popupView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.more_dialog, null);
+
+            if (dmEntryBase.getLikeState() == 1) {
+                popupView.findViewById(R.id.like_text).setVisibility(View.GONE);
+                popupView.findViewById(R.id.like_rse).setVisibility(View.VISIBLE);
+            } else {
+                popupView.findViewById(R.id.like_text).setVisibility(View.VISIBLE);
+                popupView.findViewById(R.id.like_rse).setVisibility(View.GONE);
+            }
+
             mfeb.binding.friendEntryMore.setOnClickListener(v -> {
-                View popupView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.more_dialog, null);
-                PopupWindow popup = new PopupWindow(popupView, 150, 250, true);
+                PopupWindow popup = new PopupWindow(popupView, 180, 250, true);
                 popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 popup.setTouchable(true);
                 popup.setOutsideTouchable(true);
                 popup.showAsDropDown(mfeb.binding.friendEntryMore, -120, 0);
-                popupView.findViewById(R.id.more_like).setOnClickListener(v1 -> {
+
+
+                popupView.findViewById(R.id.more_like).setOnClickListener(v1 -> { // 点赞
+                    int likeState = dmEntryBase.getLikeState();
+                    String likesId = dmEntryBase.getLikesId();
+                    String[] likesArr = likesId.split(",");  // 按逗号分割
+                    StringBuilder likeStr = new StringBuilder();
+                    if (likeState == 1) {
+                        for (String s : likesArr) {
+                            if (!Objects.equals(s, "1")) {
+                                if (likeStr.length() == 0){
+                                    likeStr = new StringBuilder(s);
+                                } else {
+                                    likeStr.append(",").append(s);
+                                }
+                            }
+                        }
+                        likeState = 0;
+                    } else {
+                        for (String s : likesArr) {
+                            if (Objects.equals(s, "1")) {
+                                if (likeStr.length() == 0){
+                                    likeStr = new StringBuilder(s);
+                                } else {
+                                    likeStr.append(",").append(s);
+                                }
+                            }
+                        }
+                        likeStr.append(1);
+                        likeState = 1;
+                    }
+
+                    DMEntryBase aeb = new DMEntryBase(dmEntryBase.getId(), dmEntryBase.getUseId(), dmEntryBase.getDecStr(), dmEntryBase.getFriendImageId(), dmEntryBase.getTime(), dmEntryBase.getFriendVideoId(), dmEntryBase.getFriendVideoTime(), likeState, likeStr.toString());
+                    FeedManager.UpdateItemToAccounttb(aeb);
+
+                    Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                    intent.putExtra("data_key", "更新数据");
+                    LocalBroadcastManager.getInstance(holder.itemView.getContext()).sendBroadcast(intent);
                     popup.dismiss();
+
                 });
-                popupView.findViewById(R.id.more_delete).setOnClickListener(v1 -> {
+                popupView.findViewById(R.id.more_delete).setOnClickListener(v1 -> { // 删除条目
                     int click_id = dmEntryBase.getId();
                     FeedManager.deleteItemFromAccounttbById(click_id);
                     Intent intent = new Intent("ACTION_DIALOG_CLOSED");
@@ -290,14 +381,14 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
             });
 
 
-            MainImageGridAdapter adapter = new MainImageGridAdapter(list);
+            adapter = new MainImageGridAdapter(list);
             mfeb.binding.mainRvImages.setAdapter(adapter);
             adapter.setOnItemClickListener((view, position1) -> {
                 Bundle bundle = new Bundle();
                 bundle.putString("PATH", list.get(position1).path);
                 bundle.putInt("TYPE", list.get(position1).type);
                 Context context = hostActivity;
-                PreviewDialog dialog = new PreviewDialog(context, list, position1);
+                dialog = new PreviewDialog(context, list, position1);
                 dialog.show();
                 dialog.setDialogSize();
             });

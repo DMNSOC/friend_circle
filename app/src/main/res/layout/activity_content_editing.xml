@@ -51,6 +51,7 @@
             android:hint="@string/dec_tips"
             android:background="@null"
             android:paddingHorizontal="30dp">
+            <requestFocus/>
         </EditText>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_images"

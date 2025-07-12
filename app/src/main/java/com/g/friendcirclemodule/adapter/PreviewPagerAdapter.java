@@ -1,6 +1,7 @@
 package com.g.friendcirclemodule.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
@@ -23,6 +24,9 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<ResourceItem> data;
     Context context;
     List<PDPlayerBase> playerList = new ArrayList<>();
+    List<Integer> playerPosList = new ArrayList<>();
+
+    boolean isPlay = false;
 
     public PreviewPagerAdapter(Context ctx, List<ResourceItem> data) {
         this.context = ctx;
@@ -54,16 +58,23 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Glide.with(ih.binding.getRoot()).load(item.path).placeholder(R.mipmap.add).apply(new RequestOptions().override(Target.SIZE_ORIGINAL)).into(ih.binding.photoView);
         } else if (holder instanceof VideoHolder) {
             VideoHolder vh = (VideoHolder) holder;
-            // 1. 初始化播放器
-            ExoPlayer player = new ExoPlayer.Builder(vh.binding.getRoot().getContext()).build();
-            vh.binding.videoView.setPlayer(player);
-            // 2. 设置媒体源（支持本地/网络URI）
-            MediaItem mediaItem = MediaItem.fromUri(item.path);
-            player.setMediaItem(mediaItem);
-            player.prepare();
-            playerList.add(new PDPlayerBase(player, position));
-            if (position != 0) {
-                playVideoAtPosition(position);
+            if (!playerPosList.contains(position)) {
+                // 1. 初始化播放器
+                ExoPlayer player = new ExoPlayer.Builder(vh.binding.getRoot().getContext()).build();
+                vh.binding.videoView.setPlayer(player);
+                // 2. 设置媒体源（支持本地/网络URI）
+                MediaItem mediaItem = MediaItem.fromUri(item.path);
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                playerPosList.add(position);
+                playerList.add(new PDPlayerBase(player, position));
+                Log.i("testtttt", "2222222");
+                if (position != 0 && !isPlay) {
+                    isPlay = true;
+                    playVideoAtPosition(position);
+                }
+            } else {
+                vh.binding.videoView.setPlayer(playerList.get(position).exoPlayer);
             }
         }
     }

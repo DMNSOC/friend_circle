@@ -126,9 +126,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         mData.clear();
         mData.addAll(list);
         adapter = new DMEntryAdapter(mData);
+        // 设置优化
         viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(this));
-        viewbinding.mainRecycler.setAdapter(adapter);
+        viewbinding.mainRecycler.setHasFixedSize(true);
         viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
+
+        viewbinding.mainRecycler.setAdapter(adapter);
         adapter.setOnItemClickListener(new DMEntryAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(DMEntryAdapter.HeaderViewHolder hvh) {
@@ -168,10 +171,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
     public void onResume() {
         super.onResume();
+        if (adapter.dialog != null) {
+            adapter.dialog.onPlay();
+        }
         List<DMEntryBase> list;
         list = FeedManager.getTypeList();
         mData.clear();
         mData.addAll(list);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (adapter.dialog != null) {
+            adapter.dialog.onPause();
+        }
     }
 }

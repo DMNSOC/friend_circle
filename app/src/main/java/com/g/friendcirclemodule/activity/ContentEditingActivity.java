@@ -2,6 +2,8 @@ package com.g.friendcirclemodule.activity;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.WindowManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -13,6 +15,7 @@ import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
+import com.g.friendcirclemodule.utlis.SafeHandler;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
@@ -79,7 +82,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                 }
             }
 
-            DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime);
+            DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime, 0, "");
             FeedManager.InsertItemToAccounttb(dmEntryBase);
             finish();
         });
@@ -97,6 +100,8 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new DragToDeleteCallback(adapter, viewbinding.deleteArea));
             itemTouchHelper.attachToRecyclerView(viewbinding.rvImages);
         }
+//        Handler mHandler = new SafeHandler(this, Looper.getMainLooper());
+//        mHandler.sendEmptyMessageDelayed(1,300);
     }
 
     private void onItemClickListener(RecyclerView.ViewHolder hv) {

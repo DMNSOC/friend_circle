@@ -16,7 +16,7 @@ public class PreviewDialog extends BaseDialog<PreviewDialogBinding, BaseModel> {
     private final int startPosition;
     private final Context context;
     PreviewPagerAdapter adapter;
-    int oldPosition = -1;
+    int oldPosition = 0;
     public PreviewDialog(@NonNull Context context, List<ResourceItem> dataList, int startPosition) {
         super(context);
         this.context = context;
@@ -33,10 +33,7 @@ public class PreviewDialog extends BaseDialog<PreviewDialogBinding, BaseModel> {
             @Override
             public void onPageSelected(int position) {
                 updateIndicator(position);
-                // 切换到新页面时播放视频\
-                if (oldPosition != -1) {
-                    adapter.pauseCurrentVideo(oldPosition);
-                }
+                adapter.pauseCurrentVideo(oldPosition);
                 adapter.playVideoAtPosition(position);
                 oldPosition = position;
             }
@@ -65,5 +62,12 @@ public class PreviewDialog extends BaseDialog<PreviewDialogBinding, BaseModel> {
     }
     protected void onDismiss() {
         adapter.stopCurrentPlayer();
+    }
+
+    public void onPause() {
+        adapter.pauseCurrentVideo(oldPosition);
+    }
+    public void onPlay() {
+        adapter.playVideoAtPosition(oldPosition);
     }
 }

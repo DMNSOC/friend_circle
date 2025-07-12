@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +29,9 @@ public class FeedManager {
             String time = cursor.getString(cursor.getColumnIndexOrThrow("time"));
             String friendVideoId = cursor.getString(cursor.getColumnIndexOrThrow("friendVideoId"));
             String friendVideoTime = cursor.getString(cursor.getColumnIndexOrThrow("friendVideoTime"));
-            DMEntryBase typeBean = new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime);
+            int likeState = cursor.getInt(cursor.getColumnIndexOrThrow("likeState"));
+            String likesId = cursor.getString(cursor.getColumnIndexOrThrow("likesId"));
+            DMEntryBase typeBean = new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likeState, likesId);
             list.add(typeBean);
         }
         return list;
@@ -59,7 +63,26 @@ public class FeedManager {
         values.put("time",bean.getTime());
         values.put("friendVideoId",bean.getFriendVideoId());
         values.put("friendVideoTime",bean.getFriendVideoTime());
+        values.put("likeState",bean.getLikeState());
+        values.put("likesId",bean.getLikesId());
         db.insert("accounttb", null,values);
+    }
+    /*
+    表更新
+     */
+    public static void UpdateItemToAccounttb(DMEntryBase bean){
+        ContentValues values = new ContentValues();
+        values.put("id",bean.getId());
+        values.put("useId",bean.getUseId());
+        values.put("decStr",bean.getDecStr());
+        values.put("friendImageId",bean.getFriendImageId());
+        values.put("time",bean.getTime());
+        values.put("friendVideoId",bean.getFriendVideoId());
+        values.put("friendVideoTime",bean.getFriendVideoTime());
+        values.put("likeState",bean.getLikeState());
+        values.put("likesId",bean.getLikesId());
+//        Log.i("testtttt", String.valueOf(values));
+        db.insertWithOnConflict("accounttb", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public static int deleteItemFromAccounttbById(int id) {
@@ -68,7 +91,7 @@ public class FeedManager {
     };
 
     /*
-    表插入
+    表插入修改
      */
     public static void InsertItemToUserInfo(DMEntryUseInfoBase bean){
         ContentValues values = new ContentValues();
