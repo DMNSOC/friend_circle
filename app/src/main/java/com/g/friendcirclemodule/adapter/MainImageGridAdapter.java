@@ -88,7 +88,8 @@ public class MainImageGridAdapter extends BaseAdapter<ResourceItem> {
 
         Glide.with(vh.binding.getRoot())
                 .load(item.path)
-                .placeholder(R.mipmap.add)
+                .placeholder(R.mipmap.question_mark)
+                .override(300, 300)
                 .into(vh.binding.ivImage); // Glide加载
         // 点击事件
         vh.binding.getRoot().setOnClickListener(view -> {
