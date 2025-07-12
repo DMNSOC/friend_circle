@@ -28,7 +28,7 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
     protected void initView() {
         super.initView();
         adjustCustomStatusBar(viewbinding.mainToolbar);
-        List<DMEntryUseInfoBase> headInfoBaseList = FeedManager.getUseInfo(1, uId);
+        List<DMEntryUseInfoBase> headInfoBaseList = FeedManager.getUseInfo(uId);
         if (!headInfoBaseList.isEmpty()) {
             DMEntryUseInfoBase dmEntryUseInfoBase = headInfoBaseList.get(0);
             if (dmEntryUseInfoBase.getFriendHead() != "" && dmEntryUseInfoBase.getFriendHead() != null) {
@@ -59,7 +59,9 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
         });
 
         viewbinding.headBtnSet.setOnClickListener(v -> {
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(1, uId,"", String.valueOf(htUri), "");
+            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
+            DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(dmEntryUseInfoBase.getId(), dmEntryUseInfoBase.getUseId(), dmEntryUseInfoBase.getFriendName(), String.valueOf(htUri), dmEntryUseInfoBase.getFriendBg());
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             finish();
         });

@@ -14,6 +14,8 @@ import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
 import com.g.friendcirclemodule.utlis.SafeHandler;
 
+import java.util.List;
+
 public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
     private final Context context;
     int uId = 1;
@@ -29,8 +31,10 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
             cancel();
         });
         viewbinding.setNameBtnEnsure.setOnClickListener(v -> {
+            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
+            DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
             String name = String.valueOf(viewbinding.setNameEt.getText());
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(2, uId,name, "", "");
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(dmEntryUseInfoBase.getId(), dmEntryUseInfoBase.getUseId(), name, dmEntryUseInfoBase.getFriendHead(), dmEntryUseInfoBase.getFriendBg());
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             cancel();
         });

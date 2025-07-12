@@ -11,7 +11,9 @@ import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.CeRibItemBinding;
 import com.g.friendcirclemodule.dialog.PDPlayerBase;
+import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
+import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.mediaselector.model.ResourceItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +23,10 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
     private OnItemClickListener onItemClickListener;
     private ExoPlayer player;
     List<PDPlayerBase> playerList = new ArrayList<>();
+    ContentEditingActivityModel viewmodel;
 
-    public ImageGridAdapter(List<ResourceItem> mData) {
+    public ImageGridAdapter(List<ResourceItem> mData, ContentEditingActivityModel viewmodel) {
+        this.viewmodel = viewmodel;
         this.mData = mData;
     }
 
@@ -45,30 +49,10 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder vh = (ViewHolder)holder;
-        vh.binding.playerView.setVisibility(View.GONE);
-        vh.binding.ivImage.setVisibility(View.VISIBLE);
-        vh.binding.videoTime.setVisibility(View.GONE);
-        if (position == (this.mData.size())) {
-            vh.binding.ivImage.setImageResource(R.mipmap.add);
-        } else {
-            ResourceItem item = this.mData.get(position);
-            if (item.type == ResourceItem.TYPE_IMAGE) {
-                Glide.with(vh.binding.getRoot()).load(item.path).into(vh.binding.ivImage); // Glide加载
-            } else {
-                vh.binding.playerView.setVisibility(View.VISIBLE);
-                vh.binding.videoTime.setVisibility(View.VISIBLE);
-                vh.binding.ivImage.setVisibility(View.GONE);
-                // 1. 初始化播放器
-                player = new ExoPlayer.Builder(vh.binding.getRoot().getContext()).build();
-                vh.binding.playerView.setPlayer(player);
-                // 2. 设置媒体源（支持本地/网络URI）
-                MediaItem mediaItem = MediaItem.fromUri(item.path);
-                player.setMediaItem(mediaItem);
-                player.prepare();
-                playerList.add(new PDPlayerBase(player, position));
-            }
-        }
-        // 点击事件
+
+        AdapterVPBase base = new AdapterVPBase(vh.binding, position, mData);
+        viewmodel.setImageGridBase(base);
+//        // 点击事件
         vh.binding.getRoot().setOnClickListener(view -> {
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClickListener(vh);

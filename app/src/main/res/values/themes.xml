@@ -3,10 +3,10 @@
     <style name="Base.Theme.FriendCircleModule" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <item name="android:windowTranslucentStatus">true</item> <!-- 透明状态栏 -->
         <item name="android:windowTranslucentNavigation">true</item> <!-- 透明导航栏 -->
-<!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item> &lt;!&ndash; 支持自定义系统栏背景 &ndash;&gt;-->
         <item name="android:statusBarColor">@android:color/transparent</item> <!-- 状态栏背景透明 -->
         <item name="android:navigationBarColor">@android:color/transparent</item> <!-- 导航栏背景透明 -->
         <item name="android:fitsSystemWindows">true</item> <!-- 让内容延伸到系统栏 -->
+        <item name="backgroundColor">#FFFFFFFF</item>
     </style>
 
     <style name="Theme.FriendCircleModule" parent="Base.Theme.FriendCircleModule" />

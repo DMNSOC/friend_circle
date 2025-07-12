@@ -2,20 +2,29 @@ package com.g.friendcirclemodule.activity;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+
+import androidx.lifecycle.Observer;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.adapter.ImageGridAdapter;
 import com.g.friendcirclemodule.databinding.ActivityContentEditingBinding;
+import com.g.friendcirclemodule.databinding.CeRibItemBinding;
+import com.g.friendcirclemodule.dialog.PDPlayerBase;
+import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
-import com.g.friendcirclemodule.utlis.SafeHandler;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
@@ -28,6 +37,7 @@ import java.util.Objects;
 public class ContentEditingActivity extends BaseActivity<ActivityContentEditingBinding, ContentEditingActivityModel> {
     ImageGridAdapter adapter;
     List<ResourceItem> list = new ArrayList<>();
+    List<PDPlayerBase> playerList = new ArrayList<>();
     int type = 1;
     @Override
     protected void initData() {
@@ -45,6 +55,37 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
     @Override
     protected void initView() {
+
+        viewmodel.getImageGridBase().observe(this, new Observer<AdapterVPBase>() {
+            @Override
+            public void onChanged(AdapterVPBase base) {
+                CeRibItemBinding vb = (CeRibItemBinding) base.vb;
+                vb.playerView.setVisibility(View.GONE);
+                vb.ivImage.setVisibility(View.VISIBLE);
+                vb.videoTime.setVisibility(View.GONE);
+                if (base.pos == (base.mData.size())) {
+                    vb.ivImage.setImageResource(R.mipmap.add);
+                } else {
+                    ResourceItem item = (ResourceItem) base.mData.get(base.pos);
+                    if (item.type == ResourceItem.TYPE_IMAGE) {
+                        Glide.with(vb.getRoot()).load(item.path).into(vb.ivImage); // Glide加载
+                    } else {
+                        vb.playerView.setVisibility(View.VISIBLE);
+                        vb.videoTime.setVisibility(View.VISIBLE);
+                        vb.ivImage.setVisibility(View.GONE);
+                        // 1. 初始化播放器
+                        ExoPlayer player = new ExoPlayer.Builder(vb.getRoot().getContext()).build();
+                        vb.playerView.setPlayer(player);
+                        // 2. 设置媒体源（支持本地/网络URI）
+                        MediaItem mediaItem = MediaItem.fromUri(item.path);
+                        player.setMediaItem(mediaItem);
+                        player.prepare();
+                        playerList.add(new PDPlayerBase(player, base.pos));
+                    }
+                }
+            }
+        });
+
 
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         Point size = new Point();
@@ -89,7 +130,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
         if (type == 2) {
             viewbinding.rvImages.setLayoutManager(new GridLayoutManager(this, itemNum));
-            adapter = new ImageGridAdapter(list);
+            adapter = new ImageGridAdapter(list, viewmodel);
             viewbinding.rvImages.setAdapter(adapter);
             adapter.notifyDataSetChanged();
             //点击事件
@@ -100,8 +141,6 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new DragToDeleteCallback(adapter, viewbinding.deleteArea));
             itemTouchHelper.attachToRecyclerView(viewbinding.rvImages);
         }
-//        Handler mHandler = new SafeHandler(this, Looper.getMainLooper());
-//        mHandler.sendEmptyMessageDelayed(1,300);
     }
 
     private void onItemClickListener(RecyclerView.ViewHolder hv) {
@@ -110,6 +149,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             new PhotoLibrary.Builder(this)
                     .setMode(PhotoLibrary.MODE_ALL)
                     .setMultiSelect(true)
+                    .setSelectNum(6)
                     .setUIProvider(new MyUIProvider())
                     .setSelectListener(selectedList -> {
                         EditDataManager.addList(selectedList);

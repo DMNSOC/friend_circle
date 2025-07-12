@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:background="@color/black_1"
-        android:layout_alignRight="@id/ce_relative_1"
+        android:layout_alignEnd="@id/ce_relative_1"
         android:layout_alignBottom="@id/ce_relative_1">
     </TextView>
 </RelativeLayout>

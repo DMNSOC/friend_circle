@@ -5,42 +5,34 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@color/grey_f3f3f3">
-    <LinearLayout
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/setting_set_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/setting_set_head"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/modify_btn_head"
-            android:padding="10dp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="@color/white">
-        </TextView>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_7D7D7D">
-        </View>
-        <TextView
-            android:id="@+id/setting_set_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/modify_btn_name"
-            android:padding="10dp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="@color/white">
-        </TextView>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey_7D7D7D">
-        </View>
-    </LinearLayout>
+        android:text="@string/modify_btn_head"
+        android:padding="10dp"
+        android:gravity="center"
+        android:textStyle="bold">
+    </TextView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_7D7D7D">
+    </View>
+    <TextView
+        android:id="@+id/setting_set_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/modify_btn_name"
+        android:padding="10dp"
+        android:gravity="center"
+        android:textStyle="bold">
+    </TextView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_7D7D7D">
+    </View>
 
 </LinearLayout>

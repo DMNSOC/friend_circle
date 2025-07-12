@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_top"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:background="@color/white">
+    android:layout_height="300dp">
     <ImageView
         android:id="@+id/main_top_bg"
         android:layout_width="match_parent"
@@ -20,11 +19,11 @@
         android:drawableTop="@mipmap/image"
         android:drawablePadding="-10dp"
         android:text="@string/modify_cover_title"
-        android:textSize="8sp"
-        android:layout_alignParentRight="true"
+        android:textSize="11sp"
+        android:layout_alignParentEnd="true"
         android:layout_alignBottom="@id/main_top_bg"
         android:layout_marginBottom="-10dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginEnd="20dp">
     </Button>
     <RelativeLayout
         android:id="@+id/main_head_name"
@@ -38,8 +37,8 @@
             android:layout_height="80dp"
             android:background="@drawable/rounded_image"
             android:clipToOutline="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp">
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp">
         </ImageView>
         <TextView
             android:id="@+id/main_top_name"
@@ -48,9 +47,9 @@
             android:text=""
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:layout_toLeftOf="@id/main_top_tx"
+            android:layout_toStartOf="@id/main_top_tx"
             android:layout_marginTop="15dp"
-            android:layout_marginRight="5dp">
+            android:layout_marginEnd="5dp">
         </TextView>
     </RelativeLayout>
 

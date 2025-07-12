@@ -14,8 +14,8 @@ import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.yalantis.ucrop.UCrop;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class BgReplaceMoreActivity extends BaseActivity<ActivityBgReplaceMoreBinding, BaseModel> {
 
@@ -71,8 +71,10 @@ public class BgReplaceMoreActivity extends BaseActivity<ActivityBgReplaceMoreBin
     // 处理保存裁切后的图片
     private void handleUseHeadImage(Uri useHeadUri) {
         try {
-            Bitmap useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(useHeadUri));
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(3, uId,"", "", String.valueOf(useHeadUri));
+            Bitmap useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(useHeadUri));;
+            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
+            DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(dmEntryUseInfoBase.getId(), dmEntryUseInfoBase.getUseId(), dmEntryUseInfoBase.getFriendName(), dmEntryUseInfoBase.getFriendHead(), String.valueOf(useHeadUri));
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             UtilityMethod.saveBitmapToDirectory(useHeadBitmap, this, "Cover");
             finish();
