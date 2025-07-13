@@ -73,8 +73,19 @@ public class BgReplaceMoreActivity extends BaseActivity<ActivityBgReplaceMoreBin
         try {
             Bitmap useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(useHeadUri));;
             List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
-            DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(dmEntryUseInfoBase.getId(), dmEntryUseInfoBase.getUseId(), dmEntryUseInfoBase.getFriendName(), dmEntryUseInfoBase.getFriendHead(), String.valueOf(useHeadUri));
+            long id = 1;
+            int useId = 1;
+            String friendName = "";
+            String friendHead = "";
+            String friendBg = String.valueOf(useHeadUri);
+            if (!coverInfoBaseList.isEmpty()) {
+                DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
+                id = dmEntryUseInfoBase.getId();
+                friendName = dmEntryUseInfoBase.getFriendName();
+                useId = dmEntryUseInfoBase.getUseId();
+                friendHead = dmEntryUseInfoBase.getFriendHead();
+            }
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             UtilityMethod.saveBitmapToDirectory(useHeadBitmap, this, "Cover");
             finish();

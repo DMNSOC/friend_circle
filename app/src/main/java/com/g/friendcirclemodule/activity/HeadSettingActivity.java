@@ -60,9 +60,22 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
 
         viewbinding.headBtnSet.setOnClickListener(v -> {
             List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
-            DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(dmEntryUseInfoBase.getId(), dmEntryUseInfoBase.getUseId(), dmEntryUseInfoBase.getFriendName(), String.valueOf(htUri), dmEntryUseInfoBase.getFriendBg());
+
+            long id = 1;
+            int useId = 1;
+            String friendName = "";
+            String friendHead = String.valueOf(htUri);
+            String friendBg = "";
+            if (!coverInfoBaseList.isEmpty()) {
+                DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
+                id = dmEntryUseInfoBase.getId();
+                friendName = dmEntryUseInfoBase.getFriendName();
+                useId = dmEntryUseInfoBase.getUseId();
+                friendBg = dmEntryUseInfoBase.getFriendBg();
+            }
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
             FeedManager.InsertItemToUserInfo(dmEntryBase);
+
             finish();
         });
     }

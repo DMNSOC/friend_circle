@@ -32,9 +32,19 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
         });
         viewbinding.setNameBtnEnsure.setOnClickListener(v -> {
             List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
-            DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
-            String name = String.valueOf(viewbinding.setNameEt.getText());
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(dmEntryUseInfoBase.getId(), dmEntryUseInfoBase.getUseId(), name, dmEntryUseInfoBase.getFriendHead(), dmEntryUseInfoBase.getFriendBg());
+            long id = 1;
+            int useId = 1;
+            String friendName = String.valueOf(viewbinding.setNameEt.getText());
+            String friendHead = "";
+            String friendBg = "";
+            if (!coverInfoBaseList.isEmpty()) {
+                DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
+                id = dmEntryUseInfoBase.getId();
+                useId = dmEntryUseInfoBase.getUseId();
+                friendHead = dmEntryUseInfoBase.getFriendHead();
+                friendBg = dmEntryUseInfoBase.getFriendBg();
+            }
+            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
             FeedManager.InsertItemToUserInfo(dmEntryBase);
             cancel();
         });
