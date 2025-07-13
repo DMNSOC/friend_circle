@@ -92,14 +92,5 @@ public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
         notifyItemRemoved(position);
     }
 
-    // 停止当前播放的视频
-    public void stopCurrentPlayer() {
-        if (player != null) {
-            player.stop();
-            player.release();
-            player = null;
-        }
-    }
-
 }
 

@@ -36,6 +36,7 @@ import java.util.Objects;
 
 public class ContentEditingActivity extends BaseActivity<ActivityContentEditingBinding, ContentEditingActivityModel> {
     ImageGridAdapter adapter;
+    ExoPlayer player;
     List<ResourceItem> list = new ArrayList<>();
     List<PDPlayerBase> playerList = new ArrayList<>();
     int type = 1;
@@ -74,7 +75,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                         vb.videoTime.setVisibility(View.VISIBLE);
                         vb.ivImage.setVisibility(View.GONE);
                         // 1. 初始化播放器
-                        ExoPlayer player = new ExoPlayer.Builder(vb.getRoot().getContext()).build();
+                        player = new ExoPlayer.Builder(vb.getRoot().getContext()).build();
                         vb.playerView.setPlayer(player);
                         // 2. 设置媒体源（支持本地/网络URI）
                         MediaItem mediaItem = MediaItem.fromUri(item.path);
@@ -173,8 +174,15 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
         super.onDestroy();
         if (type == 2) {
             // 释放播放器资源
-            adapter.stopCurrentPlayer();
+            if (playerList != null && !playerList.isEmpty()) {
+                for (PDPlayerBase pdPlayerBase : playerList) {
+                    pdPlayerBase.exoPlayer.stop();
+                    pdPlayerBase.exoPlayer.release();
+                    pdPlayerBase.exoPlayer = null;
+                }
+            }
         }
     }
+
 
 }
