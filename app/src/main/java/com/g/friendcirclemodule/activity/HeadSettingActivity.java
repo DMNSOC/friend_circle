@@ -35,6 +35,7 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
                 Bitmap useHeadBitmap = null;
                 try {
                     useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
+                    htUri = Uri.parse(dmEntryUseInfoBase.getFriendHead());
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }

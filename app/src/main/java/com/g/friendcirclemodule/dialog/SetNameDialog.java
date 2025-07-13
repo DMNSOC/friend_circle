@@ -8,6 +8,8 @@ import android.os.Looper;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
@@ -43,6 +45,9 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
                 useId = dmEntryUseInfoBase.getUseId();
                 friendHead = dmEntryUseInfoBase.getFriendHead();
                 friendBg = dmEntryUseInfoBase.getFriendBg();
+                if (friendName.isEmpty()) {
+                    friendName = dmEntryUseInfoBase.getFriendName();
+                }
             }
             DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
             FeedManager.InsertItemToUserInfo(dmEntryBase);
