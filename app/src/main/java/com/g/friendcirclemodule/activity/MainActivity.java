@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
+import com.g.friendcirclemodule.UniteApp;
 import com.g.friendcirclemodule.adapter.DMEntryAdapter;
 import com.g.friendcirclemodule.adapter.MainImageGridAdapter;
 import com.g.friendcirclemodule.databinding.ActivityMainBinding;
@@ -106,7 +108,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
     @Override
     protected void initView() {
-
+        super.initView();
 
         // 观察LiveData
         viewmodel.getMainRecyclerBase().observe(this, new Observer<AdapterVPBase>() {
@@ -205,18 +207,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                 } else {
                     MainFriendEntryBinding vb = (MainFriendEntryBinding)base.vb;
 
-                    WindowManager wm = (WindowManager) vb.getRoot().getContext().getSystemService(WINDOW_SERVICE);
-                    Point size = new Point();
-                    wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
-                    int width;
-                    if (size.x < size.y) {
-                        width = size.x;
-                    } else {
-                        width = size.y;
-                    }
-
                     ViewGroup.LayoutParams params = vb.dmeaMain.getLayoutParams();
-                    params.width = width; // 设置高度为200像素
+                    params.width = sWidth;
                     vb.dmeaMain.setLayoutParams(params);
 
                     DMEntryBase dmEntryBase = (DMEntryBase) base.mData.get(base.pos - 1);
@@ -391,7 +383,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         viewmodel.getMainImageGridBase().observe(this, new Observer<AdapterVPBase>() {
             @Override
             public void onChanged(AdapterVPBase base) {
-
                 ResourceItem item = (ResourceItem) base.mData.get(base.pos);
                 CeRibItemBinding vb = (CeRibItemBinding)base.vb;
                 ViewGroup.LayoutParams params = vb.ceRib.getLayoutParams();
@@ -431,8 +422,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         params.height = UtilityMethod.pxToDp(hostActivity.getBaseContext(), height);
                     }
                 } else {
-                    params.width = UtilityMethod.dpToPx(hostActivity.getBaseContext(), 75);
-                    params.height = UtilityMethod.dpToPx(hostActivity.getBaseContext(), 75);
+                    int width = (sWidth - UtilityMethod.dpToPx(MainActivity.this, 140)) / 3;
+                    int dp = UtilityMethod.pxToDp(MainActivity.this, width) - 2;
+
+//                    Log.i("tessssst", String.valueOf(dp));
+
+                    params.width = UtilityMethod.dpToPx(hostActivity.getBaseContext(), dp);
+                    params.height = UtilityMethod.dpToPx(hostActivity.getBaseContext(), dp);
                 }
                 vb.ceRib.setLayoutParams(params);
 

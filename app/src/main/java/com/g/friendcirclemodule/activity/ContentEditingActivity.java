@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.lifecycle.Observer;
@@ -25,6 +26,7 @@ import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
+import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
@@ -40,6 +42,9 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
     List<ResourceItem> list = new ArrayList<>();
     List<PDPlayerBase> playerList = new ArrayList<>();
     int type = 1;
+    int itemNum = 3;
+
+    int selectNum = 6;
     @Override
     protected void initData() {
         adjustCustomStatusBar(viewbinding.mainToolbar);
@@ -56,11 +61,22 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
     @Override
     protected void initView() {
-
+        super.initView();
         viewmodel.getImageGridBase().observe(this, new Observer<AdapterVPBase>() {
             @Override
             public void onChanged(AdapterVPBase base) {
                 CeRibItemBinding vb = (CeRibItemBinding) base.vb;
+
+                ViewGroup.LayoutParams params = vb.ceRib.getLayoutParams();
+
+                int width = (sWidth - UtilityMethod.dpToPx(ContentEditingActivity.this, 90)) / itemNum;
+                Log.i("tessssst", String.valueOf(width));
+                int dp = UtilityMethod.pxToDp(ContentEditingActivity.this, width) - 2;
+                params.width = UtilityMethod.dpToPx(getBaseContext(), dp);
+                params.height = UtilityMethod.dpToPx(getBaseContext(), dp);
+
+                vb.ceRib.setLayoutParams(params);
+
                 vb.playerView.setVisibility(View.GONE);
                 vb.ivImage.setVisibility(View.VISIBLE);
                 vb.videoTime.setVisibility(View.GONE);
@@ -88,12 +104,6 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
         });
 
 
-        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-        Point size = new Point();
-        wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
-        int itemNum = 4;
-
-        itemNum = (int) Math.floor((double) size.x / 400);
 
         viewbinding.ceBtnCancel.setOnClickListener(v -> {finish();});
         viewbinding.ceBtnPublish.setOnClickListener(v -> {
@@ -150,7 +160,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             new PhotoLibrary.Builder(this)
                     .setMode(PhotoLibrary.MODE_ALL)
                     .setMultiSelect(true)
-                    .setSelectNum(6)
+                    .setSelectNum((selectNum - list.size()))
                     .setUIProvider(new MyUIProvider())
                     .setSelectListener(selectedList -> {
                         EditDataManager.addList(selectedList);

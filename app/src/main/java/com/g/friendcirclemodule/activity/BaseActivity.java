@@ -1,9 +1,11 @@
 package com.g.friendcirclemodule.activity;
 
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +24,7 @@ public abstract class BaseActivity<VB extends ViewBinding,VM extends ViewModel> 
     final  String[] bv = {"viewbinding", "viewmodel"};
     public VB viewbinding;
     public VM viewmodel;
+    public int sWidth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,7 +88,12 @@ public abstract class BaseActivity<VB extends ViewBinding,VM extends ViewModel> 
         customStatusBar.setLayoutParams(params);
     }
 
-    protected void initView() {}
+    protected void initView() {
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Point size = new Point();
+        wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
+        sWidth = Math.min(size.x, size.y);
+    }
 
     protected void initInsets(View rootView) {
 

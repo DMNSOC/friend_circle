@@ -1,12 +1,16 @@
 package com.g.friendcirclemodule.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.g.friendcirclemodule.activity.MainActivity;
 import com.g.friendcirclemodule.databinding.CeRibItemBinding;
 import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.model.MainActivityModel;
+import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.model.ResourceItem;
 import java.util.List;
 

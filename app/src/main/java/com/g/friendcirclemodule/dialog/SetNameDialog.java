@@ -8,8 +8,6 @@ import android.os.Looper;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
