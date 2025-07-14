@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_rib"
     android:layout_width="90dp"
     android:layout_height="90dp">
 

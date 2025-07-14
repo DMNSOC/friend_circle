@@ -28,6 +28,7 @@ import java.util.List;
 
 public class ResourcePickerActivity extends AppCompatActivity {
 
+    public static int itemRibSize;
     public static OnResourceSelectListener staticListener;
     public static ResourceUIProvider staticUIProvider;
     public static int staticMode = 1;
@@ -40,6 +41,7 @@ public class ResourcePickerActivity extends AppCompatActivity {
     ActivityResourcePickerBinding arpb;
     ToolbarBinding tb;
     int select = 0;
+    int itemNum = 4;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,9 +50,9 @@ public class ResourcePickerActivity extends AppCompatActivity {
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         Point size = new Point();
         wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
-        int itemNum = 4;
 
-        itemNum = (int) Math.floor((double) size.x / 300);
+        itemRibSize = (int) Math.floor((double) size.x / itemNum);
+//        itemNum = (int) Math.floor((double) size.x / 300);
 
         arpb = ActivityResourcePickerBinding.inflate(getLayoutInflater());
         setContentView(arpb.getRoot());
