@@ -17,7 +17,6 @@ import com.g.friendcirclemodule.dialog.PDPlayerBase;
 import com.g.mediaselector.model.ResourceItem;
 import java.util.ArrayList;
 import java.util.List;
-import com.g.friendcirclemodule.databinding.MoreDialogBinding;
 
 public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

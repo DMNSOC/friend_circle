@@ -9,34 +9,27 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
+
 import com.g.friendcirclemodule.R;
-import com.g.friendcirclemodule.UniteApp;
 import com.g.friendcirclemodule.adapter.DMEntryAdapter;
-import com.g.friendcirclemodule.adapter.MainImageGridAdapter;
+import com.g.friendcirclemodule.adapter.RecyclerViewPool;
 import com.g.friendcirclemodule.databinding.ActivityMainBinding;
-import com.g.friendcirclemodule.databinding.CeRibItemBinding;
 import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
 import com.g.friendcirclemodule.dialog.PreviewDialog;
@@ -53,7 +46,6 @@ import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -382,82 +374,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         EnterImageUI eiu = new EnterImageUI();
                         eiu.bindImageView(vb, IGList);
                     }
-
-//                    MainImageGridAdapter adapter = new MainImageGridAdapter(IGList, viewmodel);
-//                    vb.mainRvImages.setAdapter(adapter);
-//                    adapter.notifyDataSetChanged();
-
                 }
-            }
-        });
-
-        viewmodel.getMainImageGridBase().observe(this, new Observer<AdapterVPBase>() {
-            @Override
-            public void onChanged(AdapterVPBase base) {
-                ResourceItem item = (ResourceItem) base.mData.get(base.pos);
-                CeRibItemBinding vb = (CeRibItemBinding)base.vb;
-                ViewGroup.LayoutParams params = vb.ceRib.getLayoutParams();
-                vb.playerView.setVisibility(View.GONE);
-                vb.ivImage.setVisibility(View.VISIBLE);
-                vb.videoTime.setVisibility(View.GONE);
-                if (item.type == ResourceItem.TYPE_VIDEO) {
-                    vb.videoTime.setVisibility(View.VISIBLE);
-                    vb.videoTime.setText(UtilityMethod.formatDuration(item.duration));
-                }
-
-                if (base.mData.size() == 1) {
-                    if (item.type == ResourceItem.TYPE_VIDEO) {
-                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                        retriever.setDataSource(item.path); // 支持文件路径或Uri
-                        String widthStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                        String heightStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-                        if (widthStr != null && heightStr != null) {
-                            int width = Integer.parseInt(widthStr);
-                            int height = Integer.parseInt(heightStr);
-                            params.width = UtilityMethod.pxToDp(hostActivity.getBaseContext(), width * 2);
-                            params.height = UtilityMethod.pxToDp(hostActivity.getBaseContext(), height * 2);
-                        }
-                        try {
-                            retriever.release();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    } else {
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inJustDecodeBounds = true; // 仅解码尺寸
-                        BitmapFactory.decodeFile(item.path, options);
-                        int width = options.outWidth;
-                        int height = options.outHeight;
-                        params.width = UtilityMethod.pxToDp(hostActivity.getBaseContext(), width);
-                        params.height = UtilityMethod.pxToDp(hostActivity.getBaseContext(), height);
-                    }
-                } else {
-                    int width = (sWidth - UtilityMethod.dpToPx(MainActivity.this, 138)) / 3;
-                    int dp = UtilityMethod.pxToDp(MainActivity.this, width) - 2;
-
-//                    Log.i("tessssst", String.valueOf(dp));
-
-                    params.width = UtilityMethod.dpToPx(hostActivity.getBaseContext(), dp);
-                    params.height = UtilityMethod.dpToPx(hostActivity.getBaseContext(), dp);
-                }
-                vb.ceRib.setLayoutParams(params);
-
-                Glide.with(vb.getRoot())
-                        .load(item.path)
-                        .placeholder(R.mipmap.question_mark)
-                        .override(300, 300)
-                        .into(vb.ivImage); // Glide加载
-                // 点击事件
-                vb.getRoot().setOnClickListener(view -> {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("PATH", ((ResourceItem) base.mData.get(base.pos)).path);
-                    bundle.putInt("TYPE",  ((ResourceItem) base.mData.get(base.pos)).type);
-                    Context context = hostActivity;
-                    dialog = new PreviewDialog(context, (List<ResourceItem>) base.mData, base.pos);
-                    dialog.show();
-                    dialog.setDialogSize();
-                });
             }
         });
 
@@ -522,6 +439,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
 
         viewbinding.mainRecycler.setAdapter(adapter);
+        viewbinding.mainRecycler.setRecycledViewPool(RecyclerViewPool.getSharedPool());
+
         viewbinding.mainRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() { // 监听方法
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

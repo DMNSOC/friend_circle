@@ -31,8 +31,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="20dp"
-        android:outlineAmbientShadowColor="@color/white"
-        android:outlineSpotShadowColor="@color/white"
         android:max="100"
         android:progress="0" >
     </SeekBar>

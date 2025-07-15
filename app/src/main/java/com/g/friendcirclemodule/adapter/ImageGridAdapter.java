@@ -1,28 +1,19 @@
 package com.g.friendcirclemodule.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.media3.common.MediaItem;
-import androidx.media3.exoplayer.ExoPlayer;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.CeRibItemBinding;
-import com.g.friendcirclemodule.dialog.PDPlayerBase;
 import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.mediaselector.model.ResourceItem;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImageGridAdapter extends BaseAdapter<ResourceItem> {
 
     private OnItemClickListener onItemClickListener;
-    private ExoPlayer player;
-    List<PDPlayerBase> playerList = new ArrayList<>();
     ContentEditingActivityModel viewmodel;
 
     public ImageGridAdapter(List<ResourceItem> mData, ContentEditingActivityModel viewmodel) {
