@@ -433,7 +433,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         params.height = UtilityMethod.pxToDp(hostActivity.getBaseContext(), height);
                     }
                 } else {
-                    int width = (sWidth - UtilityMethod.dpToPx(MainActivity.this, 140)) / 3;
+                    int width = (sWidth - UtilityMethod.dpToPx(MainActivity.this, 138)) / 3;
                     int dp = UtilityMethod.pxToDp(MainActivity.this, width) - 2;
 
 //                    Log.i("tessssst", String.valueOf(dp));

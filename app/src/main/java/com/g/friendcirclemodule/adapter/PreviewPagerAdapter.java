@@ -66,6 +66,7 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 MediaItem mediaItem = MediaItem.fromUri(item.path);
                 player.setMediaItem(mediaItem);
                 player.prepare();
+                vh.binding.videoView.setPlaybackStateListener();
                 playerPosList.add(position);
                 playerList.add(new PDPlayerBase(player, position));
                 Log.i("testtttt", "2222222");

@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_below="@id/friend_entry_dec"
-            android:paddingHorizontal="70dp">
+            android:paddingHorizontal="68dp">
             <RelativeLayout
                 android:id="@+id/ce_relative_0"
                 android:layout_width="wrap_content"
@@ -56,12 +56,11 @@
                 </ImageView>
                 <TextView
                     android:id="@+id/video_time_zero"
-                    android:text="2222"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:background="@color/black_1"
-                    android:layout_alignRight="@id/re_images_zero"
+                    android:layout_alignEnd="@id/re_images_zero"
                     android:layout_alignBottom="@id/re_images_zero">
                 </TextView>
             </RelativeLayout>
@@ -74,208 +73,195 @@
                 <RelativeLayout
                     android:id="@+id/ce_relative_1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_one"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_one"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_one"
+                        android:layout_alignEnd="@id/re_images_one"
                         android:layout_alignBottom="@id/re_images_one">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_2"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_two"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_two"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_two"
+                        android:layout_alignEnd="@id/re_images_two"
                         android:layout_alignBottom="@id/re_images_two">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_3"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_three"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_three"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_three"
+                        android:layout_alignEnd="@id/re_images_three"
                         android:layout_alignBottom="@id/re_images_three">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_4"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_four"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_four"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_four"
+                        android:layout_alignEnd="@id/re_images_four"
                         android:layout_alignBottom="@id/re_images_four">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_5"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_five"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_five"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_five"
+                        android:layout_alignEnd="@id/re_images_five"
                         android:layout_alignBottom="@id/re_images_five">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_6"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_six"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_six"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_six"
+                        android:layout_alignEnd="@id/re_images_six"
                         android:layout_alignBottom="@id/re_images_six">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_7"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_seven"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_seven"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_seven"
+                        android:layout_alignEnd="@id/re_images_seven"
                         android:layout_alignBottom="@id/re_images_seven">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_8"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_eight"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_eight"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_eight"
+                        android:layout_alignEnd="@id/re_images_eight"
                         android:layout_alignBottom="@id/re_images_eight">
                     </TextView>
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/ce_relative_9"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="1dp">
                     <ImageView
                         android:id="@+id/re_images_nine"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:src="@mipmap/bz1"
                         android:scaleType="centerCrop">
                     </ImageView>
                     <TextView
                         android:id="@+id/video_time_nine"
-                        android:text="2222"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:background="@color/black_1"
-                        android:layout_alignRight="@id/re_images_nine"
+                        android:layout_alignEnd="@id/re_images_nine"
                         android:layout_alignBottom="@id/re_images_nine">
                     </TextView>
                 </RelativeLayout>
 
             </GridLayout>
         </RelativeLayout>
-<!--        <include-->
-<!--            android:id="@+id/rv_images"-->
-<!--            layout="@layout/enter_image">-->
-<!--        </include>-->
         <TextView
             android:id="@+id/friend_entry_time"
             android:layout_width="290dp"
@@ -297,6 +283,7 @@
             android:padding="5dp">
         </ImageButton>
         <RelativeLayout
+            android:visibility="gone"
             android:id="@+id/catalogs_list"
             android:layout_width="290dp"
             android:layout_height="wrap_content"

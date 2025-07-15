@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/videoContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
-    <androidx.media3.ui.PlayerView
+    <com.g.friendcirclemodule.utlis.CustomPlayerView
         android:id="@+id/videoView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </androidx.media3.ui.PlayerView>
+        android:layout_height="match_parent"
+        app:controller_layout_id="@layout/custom_player_controller">
+    </com.g.friendcirclemodule.utlis.CustomPlayerView>
 </FrameLayout>
