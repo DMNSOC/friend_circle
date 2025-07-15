@@ -15,9 +15,9 @@ import com.g.friendcirclemodule.databinding.ItemPreviewImageBinding;
 import com.g.friendcirclemodule.databinding.ItemPreviewVideoBinding;
 import com.g.friendcirclemodule.dialog.PDPlayerBase;
 import com.g.mediaselector.model.ResourceItem;
-import com.github.chrisbanes.photoview.PhotoView;
 import java.util.ArrayList;
 import java.util.List;
+import com.g.friendcirclemodule.databinding.MoreDialogBinding;
 
 public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -85,12 +85,10 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class ImageHolder extends RecyclerView.ViewHolder {
-        PhotoView photoView;
         ItemPreviewImageBinding binding;
         ImageHolder(ItemPreviewImageBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            photoView = itemView.findViewById(R.id.photoView);
         }
     }
 

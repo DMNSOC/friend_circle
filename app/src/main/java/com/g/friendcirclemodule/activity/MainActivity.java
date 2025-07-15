@@ -37,7 +37,7 @@ import com.g.friendcirclemodule.adapter.DMEntryAdapter;
 import com.g.friendcirclemodule.adapter.MainImageGridAdapter;
 import com.g.friendcirclemodule.databinding.ActivityMainBinding;
 import com.g.friendcirclemodule.databinding.CeRibItemBinding;
-import com.g.friendcirclemodule.databinding.MainFriendEntryBinding;
+import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
 import com.g.friendcirclemodule.dialog.PreviewDialog;
 import com.g.friendcirclemodule.dp.DMEntryBase;
@@ -47,6 +47,7 @@ import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.model.MainActivityModel;
 import com.g.friendcirclemodule.dialog.SettingDialog;
+import com.g.friendcirclemodule.utlis.EnterImageUI;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
@@ -56,8 +57,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import com.g.friendcirclemodule.databinding.MoreDialogBinding;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityModel> {
+    MoreDialogBinding moreDialog;
+
     public static Activity hostActivity;
     List<DMEntryBase> mData = new ArrayList<>();
     DMEntryAdapter adapter;
@@ -108,6 +112,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
     @Override
     protected void initView() {
+
         super.initView();
 
         // 观察LiveData
@@ -205,7 +210,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         moreDialog.show();
                     });
                 } else {
-                    MainFriendEntryBinding vb = (MainFriendEntryBinding)base.vb;
+                    FriendEntryBinding vb = (FriendEntryBinding)base.vb;
 
                     ViewGroup.LayoutParams params = vb.dmeaMain.getLayoutParams();
                     params.width = sWidth;
@@ -247,7 +252,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         vb.friendEntryDec.setText(dmEntryBase.getDecStr());
                     }
                     vb.friendEntryTime.setText(vb.getRoot().getContext().getString(R.string.entry_time, String.valueOf(dmEntryBase.getTime())));
-                    vb.mainRvImages.setLayoutManager(new GridLayoutManager(MainActivity.this, 3));
+//                    vb.mainRvImages.setLayoutManager(new GridLayoutManager(MainActivity.this, 3));
 
                     vb.catalogsList.setVisibility(View.GONE);
 
@@ -306,24 +311,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         }
                     }
 
-                    View popupView = LayoutInflater.from(MainActivity.this).inflate(R.layout.more_dialog, null);
-
+                    moreDialog = MoreDialogBinding.inflate(LayoutInflater.from(vb.getRoot().getContext()), vb.getRoot(),false);
                     if (dmEntryBase.getLikeState() == 1) {
-                        popupView.findViewById(R.id.like_text).setVisibility(View.GONE);
-                        popupView.findViewById(R.id.like_rse).setVisibility(View.VISIBLE);
+                        moreDialog.likeText.setVisibility(View.GONE);
+                        moreDialog.likeRse.setVisibility(View.VISIBLE);
                     } else {
-                        popupView.findViewById(R.id.like_text).setVisibility(View.VISIBLE);
-                        popupView.findViewById(R.id.like_rse).setVisibility(View.GONE);
+                        moreDialog.likeText.setVisibility(View.VISIBLE);
+                        moreDialog.likeRse.setVisibility(View.GONE);
                     }
 
                     vb.friendEntryMore.setOnClickListener(v -> {
-                        PopupWindow popup = new PopupWindow(popupView, 180, 250, true);
+                        PopupWindow popup = new PopupWindow(moreDialog.getRoot(), 180, 250, true);
                         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         popup.setTouchable(true);
                         popup.setOutsideTouchable(true);
                         popup.showAsDropDown(vb.friendEntryMore, -120, 0);
 
-                        popupView.findViewById(R.id.more_like).setOnClickListener(v1 -> { // 点赞
+                        moreDialog.moreLike.setOnClickListener(v1 -> { // 点赞
                             int likeState = dmEntryBase.getLikeState();
                             String likesId = dmEntryBase.getLikesId();
                             String[] likesArr = likesId.split(",");  // 按逗号分割
@@ -362,7 +366,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             popup.dismiss();
 
                         });
-                        popupView.findViewById(R.id.more_delete).setOnClickListener(v1 -> { // 删除条目
+                        moreDialog.moreDelete.setOnClickListener(v1 -> { // 删除条目
                             int click_id = dmEntryBase.getId();
                             FeedManager.deleteItemFromAccounttbById(click_id);
                             Intent intent = new Intent("ACTION_DIALOG_CLOSED");
@@ -371,10 +375,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             popup.dismiss();
                         });
                     });
+                    if (IGList.isEmpty()) {
+                        vb.rvImages.setVisibility(View.GONE);
+                    } else {
+                        vb.rvImages.setVisibility(View.VISIBLE);
+                        EnterImageUI eiu = new EnterImageUI();
+                        eiu.bindImageView(vb, IGList);
+                    }
 
-                    MainImageGridAdapter adapter = new MainImageGridAdapter(IGList, viewmodel);
-                    vb.mainRvImages.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+//                    MainImageGridAdapter adapter = new MainImageGridAdapter(IGList, viewmodel);
+//                    vb.mainRvImages.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
 
                 }
             }

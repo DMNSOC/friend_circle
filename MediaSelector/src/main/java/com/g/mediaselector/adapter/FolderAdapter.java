@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.g.mediaselector.R;
 import com.g.mediaselector.model.ResourceFolder;
+import com.g.mediaselector.databinding.ItemFolderBinding;
 import java.util.List;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderViewHolder> {
@@ -27,20 +28,23 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
 
     @Override
     public FolderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_folder, parent, false);
-        return new FolderViewHolder(v);
+        ItemFolderBinding ifb = ItemFolderBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+//        View v = LayoutInflater.from(parent.getContext())
+//                .inflate(R.layout.item_folder, parent, false);
+        return new FolderViewHolder(ifb);
     }
 
     @Override
     public void onBindViewHolder(FolderViewHolder holder, int position) {
         ResourceFolder folder = data.get(position);
-        holder.tvName.setText(folder.name);
-        holder.tvCount.setText(folder.items.size() + "项");
-        // 用Glide或Picasso加载封面
-         Glide.with(holder.ivCover.getContext()).load(folder.coverPath).into(holder.ivCover);
 
-        holder.itemView.setOnClickListener(v -> {
+        holder.binding.tvName.setText(folder.name);
+        holder.binding.tvCount.setText(folder.items.size() + "项");
+        // 用Glide或Picasso加载封面
+         Glide.with(holder.binding.ivCover.getContext()).load(folder.coverPath).into(holder.binding.ivCover);
+
+        holder.binding.getRoot().setOnClickListener(v -> {
             if (listener != null) listener.onClick(position);
         });
     }
@@ -51,13 +55,10 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
     }
 
     static class FolderViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivCover;
-        TextView tvName, tvCount;
-        FolderViewHolder(View itemView) {
-            super(itemView);
-            ivCover = itemView.findViewById(R.id.ivCover);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvCount = itemView.findViewById(R.id.tvCount);
+        private final ItemFolderBinding binding;
+        FolderViewHolder(ItemFolderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

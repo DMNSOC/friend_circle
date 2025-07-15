@@ -5,7 +5,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.g.friendcirclemodule.databinding.MainFriendEntryBinding;
+
+import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
 import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.AdapterVPBase;
@@ -28,9 +29,9 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private final MainFriendEntryBinding binding;
+        private final FriendEntryBinding binding;
 
-        public ItemViewHolder(MainFriendEntryBinding mfeb) {
+        public ItemViewHolder(FriendEntryBinding mfeb) {
             super(mfeb.getRoot());
             this.binding = mfeb;
         }
@@ -52,7 +53,7 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
             MainTopBinding mtb = MainTopBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new HeaderViewHolder(mtb);
         } else {
-            MainFriendEntryBinding mfeb = MainFriendEntryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            FriendEntryBinding mfeb = FriendEntryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new ItemViewHolder(mfeb);
         }
     }

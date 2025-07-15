@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.g.mediaselector.R;
 import com.g.mediaselector.adapter.FolderAdapter;
+import com.g.mediaselector.databinding.ItemFolderBinding;
 import com.g.mediaselector.model.ResourceFolder;
+import com.g.mediaselector.databinding.DialogFolderListBinding;
 import java.util.List;
 
 public class FolderListDialog extends DialogFragment {
@@ -36,10 +38,9 @@ public class FolderListDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = new Dialog(getContext(), com.github.chrisbanes.photoview.R.style.Theme_AppCompat_Light_Dialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_folder_list, null, false);
-        dialog.setContentView(view);
-
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        DialogFolderListBinding dflb = DialogFolderListBinding.inflate(LayoutInflater.from(getContext()), null, false);
+        dialog.setContentView(dflb.getRoot());
+        RecyclerView recyclerView = dflb.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         FolderAdapter adapter = new FolderAdapter(folderList, position -> {
             if (onFolderSelectedListener != null) {
