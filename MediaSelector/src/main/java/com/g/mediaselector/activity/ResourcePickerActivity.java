@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.g.mediaselector.R;
 import com.g.mediaselector.adapter.ResourceAdapter;
@@ -56,6 +57,10 @@ public class ResourcePickerActivity extends AppCompatActivity {
 
         arpb = ActivityResourcePickerBinding.inflate(getLayoutInflater());
         setContentView(arpb.getRoot());
+        RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
+        recycledViewPool.setMaxRecycledViews(ResourceItem.TYPE_IMAGE, 200);
+        recycledViewPool.setMaxRecycledViews(ResourceItem.TYPE_VIDEO, 200);
+        arpb.recyclerView.setRecycledViewPool(recycledViewPool);
         arpb.recyclerView.setLayoutManager(new GridLayoutManager(this, itemNum));
         arpb.btnDone.setOnClickListener(v -> finishWithResult());
 
