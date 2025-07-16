@@ -129,6 +129,13 @@ public class EnterImageUI implements EnterImageUIProvider {
                 binding.videoTimeZero.setText(UtilityMethod.formatDuration(list.get(0).duration));
             }
 
+            int defaultWidth =  UtilityMethod.dpToPx(binding.getRoot().getContext(), 200);
+            if (params.width < defaultWidth) {
+                float x = (float) defaultWidth / params.width;
+                params.width = (int) (params.width * x);
+                params.height = (int) (params.height * x);
+            }
+
             binding.reImagesZero.setLayoutParams(params);
             Glide.with(binding.getRoot())
                     .load(list.get(0).path)
