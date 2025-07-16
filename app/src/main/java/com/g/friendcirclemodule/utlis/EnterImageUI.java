@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EnterImageUI implements EnterImageUIProvider {
+
+    PreviewDialog dialog;
     @Override
     public void bindImageView(FriendEntryBinding binding, List<ResourceItem> list) {
         Log.i("2222222", String.valueOf(list.size()));
@@ -83,7 +85,7 @@ public class EnterImageUI implements EnterImageUIProvider {
                     bundle.putString("PATH", list.get(finalI).path);
                     bundle.putInt("TYPE",  list.get(finalI).type);
                     Context context = hostActivity;
-                    PreviewDialog dialog = new PreviewDialog(context, (List<ResourceItem>) list, finalI);
+                    dialog = new PreviewDialog(context, (List<ResourceItem>) list, finalI);
                     dialog.show();
                     dialog.setDialogSize();
                 });
@@ -149,10 +151,21 @@ public class EnterImageUI implements EnterImageUIProvider {
                 bundle.putString("PATH", list.get(0).path);
                 bundle.putInt("TYPE",  list.get(0).type);
                 Context context = hostActivity;
-                PreviewDialog dialog = new PreviewDialog(context, (List<ResourceItem>) list, 0);
+                dialog = new PreviewDialog(context, (List<ResourceItem>) list, 0);
                 dialog.show();
                 dialog.setDialogSize();
             });
+        }
+    }
+
+    public void dialogOnPlay() {
+        if (dialog != null) {
+            dialog.onPlay();
+        }
+    }
+    public void dialogOnPause() {
+        if (dialog != null) {
+            dialog.onPause();
         }
     }
 }

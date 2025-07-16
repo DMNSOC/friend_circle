@@ -31,7 +31,6 @@ import com.g.friendcirclemodule.adapter.RecyclerViewPool;
 import com.g.friendcirclemodule.databinding.ActivityMainBinding;
 import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
-import com.g.friendcirclemodule.dialog.PreviewDialog;
 import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
@@ -61,7 +60,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     boolean isOpen = true;
     boolean isReceiverRegistered = false;
 
-    public PreviewDialog dialog;
+    EnterImageUI eiu = new EnterImageUI();
 
     @Override
     protected void onStart() {
@@ -367,7 +366,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         vb.rvImages.setVisibility(View.GONE);
                     } else {
                         vb.rvImages.setVisibility(View.VISIBLE);
-                        EnterImageUI eiu = new EnterImageUI();
                         eiu.bindImageView(vb, IGList);
                     }
                 }
@@ -469,9 +467,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
     public void onResume() {
         super.onResume();
-        if (dialog != null) {
-            dialog.onPlay();
-        }
+        eiu.dialogOnPlay();
         List<DMEntryBase> list;
         list = FeedManager.getTypeList();
         mData.clear();
@@ -482,8 +478,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if (dialog != null) {
-            dialog.onPause();
-        }
+        eiu.dialogOnPause();
     }
 }

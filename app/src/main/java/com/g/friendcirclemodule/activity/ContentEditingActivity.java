@@ -179,6 +179,19 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             adapter.notifyDataSetChanged();
         }
     }
+
+    protected void onPause() {
+        super.onPause();
+        if (type == 2) {
+            if (playerList != null && !playerList.isEmpty()) {
+                for (PDPlayerBase pdPlayerBase : playerList) {
+                    pdPlayerBase.exoPlayer.stop();
+                }
+            }
+        }
+
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

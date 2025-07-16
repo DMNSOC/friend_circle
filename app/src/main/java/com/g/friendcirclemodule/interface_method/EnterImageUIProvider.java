@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface EnterImageUIProvider {
     void bindImageView(FriendEntryBinding itemView, List<ResourceItem> list);
+    void dialogOnPlay();
+    void dialogOnPause();
 }
