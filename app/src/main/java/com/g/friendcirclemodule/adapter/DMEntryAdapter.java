@@ -12,8 +12,6 @@ import com.g.friendcirclemodule.model.MainActivityModel;
 import java.util.List;
 
 public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
     MainActivityModel viewmodel;
 
     public DMEntryAdapter(List<DMEntryBase> mData, MainActivityModel viewmodel) {
@@ -23,7 +21,7 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? TYPE_HEADER : TYPE_ITEM;
+        return position == 0 ? RecyclerViewPool.TYPE_HEADER : RecyclerViewPool.TYPE_ITEM;
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -47,12 +45,15 @@ public class DMEntryAdapter extends BaseAdapter<DMEntryBase> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_HEADER) {
+
+        if (viewType == RecyclerViewPool.TYPE_HEADER) {
             MainTopBinding mtb = MainTopBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-            return new HeaderViewHolder(mtb);
+            HeaderViewHolder hvh = new HeaderViewHolder(mtb);
+            return hvh;
         } else {
             FriendEntryBinding mfeb = FriendEntryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-            return new ItemViewHolder(mfeb);
+            ItemViewHolder ivh = new ItemViewHolder(mfeb);
+            return ivh;
         }
     }
 

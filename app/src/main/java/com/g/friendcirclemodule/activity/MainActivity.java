@@ -25,7 +25,6 @@ import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.adapter.DMEntryAdapter;
 import com.g.friendcirclemodule.adapter.RecyclerViewPool;
@@ -52,8 +51,6 @@ import java.util.Objects;
 import com.g.friendcirclemodule.databinding.MoreDialogBinding;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityModel> {
-    MoreDialogBinding moreDialog;
-
     public static Activity hostActivity;
     List<DMEntryBase> mData = new ArrayList<>();
     DMEntryAdapter adapter;
@@ -62,7 +59,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     private Handler longPressHandler;
     private Runnable longPressRunnable;
     boolean isOpen = true;
-
     boolean isReceiverRegistered = false;
 
     public PreviewDialog dialog;
@@ -303,7 +299,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         }
                     }
 
-                    moreDialog = MoreDialogBinding.inflate(LayoutInflater.from(vb.getRoot().getContext()), vb.getRoot(),false);
+                    MoreDialogBinding moreDialog = MoreDialogBinding.inflate(LayoutInflater.from(vb.getRoot().getContext()), vb.getRoot(),false);
                     if (dmEntryBase.getLikeState() == 1) {
                         moreDialog.likeText.setVisibility(View.GONE);
                         moreDialog.likeRse.setVisibility(View.VISIBLE);
