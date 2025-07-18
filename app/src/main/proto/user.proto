@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package user;
+
+message User {
+  int32 id = 1;
+  int32 useId = 2;
+  string decStr = 3;
+  string friendImageId = 4;
+  string timeStr = 5;
+  string friendVideoId = 6;
+  string friendVideoTime = 7;
+  int32 likeState = 8;
+  string likesId = 9;
+}
+
+message UserId {
+  int32 id = 1;
+}
+
+message Empty {}
+
+message UserList {
+  repeated User users = 1;
+}

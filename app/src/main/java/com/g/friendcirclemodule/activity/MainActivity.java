@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,11 +40,13 @@ import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.model.MainActivityModel;
 import com.g.friendcirclemodule.dialog.SettingDialog;
 import com.g.friendcirclemodule.utlis.EnterImageUI;
+import com.g.friendcirclemodule.utlis.ProtoHttpClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -82,7 +85,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         }
     }
 
-
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -101,6 +103,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     protected void initView() {
 
         super.initView();
+        // 请求接口
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ProtoHttpClient client = new ProtoHttpClient();
+                try {
+                    Log.i("111111", "列表： " + client.listUsers());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
 
         // 观察LiveData
         viewmodel.getMainRecyclerBase().observe(this, new Observer<AdapterVPBase>() {

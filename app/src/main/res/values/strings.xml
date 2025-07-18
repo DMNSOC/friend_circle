@@ -16,5 +16,10 @@
     <string name="modify_head_btn">设置头像</string>
     <string name="modify_cover_title">更换封面</string>
     <string name="modify_cover_btn_1">本地图库</string>
+    <string name="tip_title_1">请求为空</string>
+    <string name="tip_title_2">请求成功</string>
+    <string name="tip_title_3">请求失败</string>
+    <string name="tip_title_4">请求异常</string>
+
 
 </resources>

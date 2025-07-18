@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id 'com.google.protobuf' version '0.9.4' apply true
 }
 
 android {
@@ -55,4 +56,17 @@ dependencies {
     androidTestImplementation libs.espresso.core
 
     implementation project(":MediaSelector")  // 模块名称
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.24.3'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java { option 'lite' }
+            }
+        }
+    }
 }

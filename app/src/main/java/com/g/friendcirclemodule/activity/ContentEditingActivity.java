@@ -1,19 +1,15 @@
 package com.g.friendcirclemodule.activity;
 
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.adapter.ImageGridAdapter;
@@ -26,10 +22,12 @@ import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
+import com.g.friendcirclemodule.utlis.ProtoHttpClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +41,6 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
     List<PDPlayerBase> playerList = new ArrayList<>();
     int type = 1;
     int itemNum = 3;
-
     int selectNum = 6;
     @Override
     protected void initData() {
@@ -136,6 +133,23 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
             DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime, 0, "");
             FeedManager.InsertItemToAccounttb(dmEntryBase);
+
+            // 请求接口
+            String finalImagePath = imagePath;
+            String finalVideoPath = videoPath;
+            String finalFriendVideoTime = friendVideoTime;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ProtoHttpClient client = new ProtoHttpClient();
+                    try {
+                        client.createUser(useId, dec, finalImagePath, time, finalVideoPath, finalFriendVideoTime, 0, "");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }).start();
+
             finish();
         });
 
@@ -206,6 +220,4 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             }
         }
     }
-
-
 }
