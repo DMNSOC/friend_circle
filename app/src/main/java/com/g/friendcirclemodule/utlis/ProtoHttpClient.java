@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import okhttp3.MediaType;
@@ -107,7 +108,7 @@ public class ProtoHttpClient {
                 return UserOuterClass.UserList.parseFrom(respBytes);
             } else {
                 byte[] respBytes = {};
-                Log.e("111111", "请求失败: " + response.code() + respBytes);
+                Log.e("111111", "请求失败: " + response.code() + Arrays.toString(respBytes));
                 return UserOuterClass.UserList.parseFrom(respBytes);
             }
 

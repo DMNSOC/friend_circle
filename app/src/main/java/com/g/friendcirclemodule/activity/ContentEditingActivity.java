@@ -17,9 +17,7 @@ import com.g.friendcirclemodule.databinding.ActivityContentEditingBinding;
 import com.g.friendcirclemodule.databinding.CeRibItemBinding;
 import com.g.friendcirclemodule.dialog.PDPlayerBase;
 import com.g.friendcirclemodule.dp.AdapterVPBase;
-import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
-import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
 import com.g.friendcirclemodule.utlis.ProtoHttpClient;
@@ -59,7 +57,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
     @Override
     protected void initView() {
         super.initView();
-        viewmodel.getImageGridBase().observe(this, new Observer<AdapterVPBase>() {
+        viewmodel.getImageGridBase().observe(this, new Observer<>() {
             @Override
             public void onChanged(AdapterVPBase base) {
                 CeRibItemBinding vb = (CeRibItemBinding) base.vb;
@@ -105,14 +103,14 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
         viewbinding.ceBtnCancel.setOnClickListener(v -> {finish();});
         viewbinding.ceBtnPublish.setOnClickListener(v -> {
             Date data = new Date();
-            long id = data.getTime();
+//            long id = data.getTime();
             int useId = 1;
             String dec = viewbinding.ceDescribe.getText().toString();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm");
             String time = sdf.format(data);
             String imagePath = "";
             String videoPath = "";
-            String friendVideoTime = "";
+            StringBuilder friendVideoTime = new StringBuilder();
             for (ResourceItem resourceItem : list) {
                 if (resourceItem.type == ResourceItem.TYPE_IMAGE) {
                     if(Objects.equals(imagePath, "")) {
@@ -122,10 +120,10 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                     }
                 } else {
                     if(Objects.equals(videoPath, "")) {
-                        friendVideoTime = String.valueOf(resourceItem.duration);
+                        friendVideoTime = new StringBuilder(String.valueOf(resourceItem.duration));
                         videoPath = resourceItem.path;
                     } else  {
-                        friendVideoTime = friendVideoTime + "," + resourceItem.duration;
+                        friendVideoTime.append(",").append(resourceItem.duration);
                         videoPath = videoPath + "," + resourceItem.path;
                     }
                 }
@@ -137,7 +135,7 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             // 请求接口
             String finalImagePath = imagePath;
             String finalVideoPath = videoPath;
-            String finalFriendVideoTime = friendVideoTime;
+            String finalFriendVideoTime = friendVideoTime.toString();
             new Thread(new Runnable() {
                 @Override
                 public void run() {

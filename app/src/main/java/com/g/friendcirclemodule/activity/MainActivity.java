@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         super.initView();
 
         // 观察LiveData
-        viewmodel.getMainRecyclerBase().observe(this, new Observer<AdapterVPBase>() {
+        viewmodel.getMainRecyclerBase().observe(this, new Observer<>() {
             @Override
             public void onChanged(AdapterVPBase base) {
                 if (base.pos == 0) {
@@ -118,8 +118,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     List<DMEntryUseInfoBase> infoBaseList = FeedManager.getUseInfo(1);
                     if (!infoBaseList.isEmpty()) {
                         DMEntryUseInfoBase dmEntryUseInfoBase = infoBaseList.get(0);
-                        if (dmEntryUseInfoBase.getFriendHead() != "" && dmEntryUseInfoBase.getFriendHead() != null) {
-                            Bitmap croppedBitmap = null;
+                        if (!Objects.equals(dmEntryUseInfoBase.getFriendHead(), "") && dmEntryUseInfoBase.getFriendHead() != null) {
+                            Bitmap croppedBitmap;
                             try {
                                 croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
                             } catch (FileNotFoundException e) {
@@ -130,14 +130,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             vb.mainTopTx.setImageResource(R.mipmap.tx);
                         }
 
-                        if (dmEntryUseInfoBase.getFriendName() != "" && dmEntryUseInfoBase.getFriendName() != null) {
+                        if (!Objects.equals(dmEntryUseInfoBase.getFriendName(), "") && dmEntryUseInfoBase.getFriendName() != null) {
                             vb.mainTopName.setText(dmEntryUseInfoBase.getFriendName());
                         } else {
                             vb.mainTopName.setText(R.string.user_name);
                         }
 
-                        if (dmEntryUseInfoBase.getFriendBg() != "" && dmEntryUseInfoBase.getFriendBg() != null) {
-                            Bitmap croppedBitmap = null;
+                        if (!Objects.equals(dmEntryUseInfoBase.getFriendBg(), "") && dmEntryUseInfoBase.getFriendBg() != null) {
+                            Bitmap croppedBitmap;
                             try {
                                 croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendBg())));
                             } catch (FileNotFoundException e) {
@@ -161,8 +161,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         ViewGroup.LayoutParams params1 = vb.mainTop.getLayoutParams();
                         ViewGroup.LayoutParams params2 = vb.mainTopBg.getLayoutParams();
                         int dp = UtilityMethod.pxToDp(vb.getRoot().getContext(), params1.height);
-                        int px1 = 0;
-                        int px2 = 0;
+                        int px1;
+                        int px2;
 
                         if (dp == 600) {
                             vb.mainImages.setVisibility(View.GONE);
@@ -216,7 +216,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         DMEntryUseInfoBase dmEntryUseInfoBase = infoBaseList.get(0);
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendHead(), "") && dmEntryUseInfoBase.getFriendHead() != null) {
-                            Bitmap croppedBitmap = null;
+                            Bitmap croppedBitmap;
                             try {
                                 croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
                             } catch (FileNotFoundException e) {
@@ -259,7 +259,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                 List<DMEntryUseInfoBase> NIBL = FeedManager.getUseInfo(Integer.parseInt(s));
                                 if (!NIBL.isEmpty()) {
                                     DMEntryUseInfoBase dmEntryUseInfoBase = NIBL.get(0);
-                                    if (dmEntryUseInfoBase.getFriendName() != "" && dmEntryUseInfoBase.getFriendName() != null) {
+                                    if (!Objects.equals(dmEntryUseInfoBase.getFriendName(), "") && dmEntryUseInfoBase.getFriendName() != null) {
                                         if (Objects.equals(str, "")) {
                                             str = dmEntryUseInfoBase.getFriendName();
                                         } else {
@@ -469,7 +469,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
         ProtoHttpClient.getListData(result -> {
             Log.i("111111", "列表： " + result);
-            List<DMEntryBase> list = new ArrayList<DMEntryBase>();
+            List<DMEntryBase> list = new ArrayList<>();
             for (UserOuterClass.User user : result) {
                 DMEntryBase a = getDmEntryBase(user);
                 list.add(a);
@@ -546,7 +546,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         eiu.dialogOnPlay();
         ProtoHttpClient.getListData(result -> {
             Log.i("111111", "列表： " + result);
-            List<DMEntryBase> list = new ArrayList<DMEntryBase>();
+            List<DMEntryBase> list = new ArrayList<>();
             for (UserOuterClass.User user : result) {
                 DMEntryBase a = getDmEntryBase(user);
                 list.add(a);
