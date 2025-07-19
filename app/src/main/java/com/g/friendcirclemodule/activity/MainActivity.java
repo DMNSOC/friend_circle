@@ -48,9 +48,12 @@ import com.g.mediaselector.model.ResourceItem;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import com.g.friendcirclemodule.databinding.MoreDialogBinding;
+
+import user.UserOuterClass;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityModel> {
     public static Activity hostActivity;
@@ -103,18 +106,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     protected void initView() {
 
         super.initView();
-        // 请求接口
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ProtoHttpClient client = new ProtoHttpClient();
-                try {
-                    Log.i("111111", "列表： " + client.listUsers());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
 
         // 观察LiveData
         viewmodel.getMainRecyclerBase().observe(this, new Observer<AdapterVPBase>() {
@@ -218,6 +209,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     vb.dmeaMain.setLayoutParams(params);
 
                     DMEntryBase dmEntryBase = (DMEntryBase) base.mData.get(base.pos - 1);
+                    Log.i("333333", String.valueOf(base.mData.get(base.pos - 1)));
                     // 设置缓存的头像信息
                     List<DMEntryUseInfoBase> infoBaseList = FeedManager.getUseInfo(dmEntryBase.getUseId());
                     if (!infoBaseList.isEmpty()) {
@@ -322,7 +314,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     }
 
                     vb.friendEntryMore.setOnClickListener(v -> {
-                        PopupWindow popup = new PopupWindow(moreDialog.getRoot(), 180, 250, true);
+                        PopupWindow popup = new PopupWindow(moreDialog.getRoot(), 180, 300, true);
                         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         popup.setTouchable(true);
                         popup.setOutsideTouchable(true);
@@ -358,22 +350,61 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                 likeState = 1;
                             }
 
-                            DMEntryBase aeb = new DMEntryBase(dmEntryBase.getId(), dmEntryBase.getUseId(), dmEntryBase.getDecStr(), dmEntryBase.getFriendImageId(), dmEntryBase.getTime(), dmEntryBase.getFriendVideoId(), dmEntryBase.getFriendVideoTime(), likeState, likeStr.toString());
-                            FeedManager.UpdateItemToAccounttb(aeb);
 
-                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-                            intent.putExtra("data_key", "更新数据");
-                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-                            popup.dismiss();
+                            int finalLikeState = likeState;
+                            StringBuilder finalLikeStr = likeStr;
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ProtoHttpClient client = new ProtoHttpClient();
+                                    try {
+                                        client.updateUser(dmEntryBase.getId(), finalLikeState, finalLikeStr.toString());
+                                        new Handler(Looper.getMainLooper()).post(() -> {
+                                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                                            intent.putExtra("data_key", "更新数据");
+                                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                                            popup.dismiss();
+                                        });
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }).start();
+//                            DMEntryBase aeb = new DMEntryBase(dmEntryBase.getId(), dmEntryBase.getUseId(), dmEntryBase.getDecStr(), dmEntryBase.getFriendImageId(), dmEntryBase.getTime(), dmEntryBase.getFriendVideoId(), dmEntryBase.getFriendVideoTime(), likeState, likeStr.toString());
+//                            FeedManager.UpdateItemToAccounttb(aeb);
+//                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+//                            intent.putExtra("data_key", "更新数据");
+//                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+//                            popup.dismiss();
 
                         });
                         moreDialog.moreDelete.setOnClickListener(v1 -> { // 删除条目
-                            int click_id = dmEntryBase.getId();
-                            FeedManager.deleteItemFromAccounttbById(click_id);
-                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-                            intent.putExtra("data_key", "更新数据");
-                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-                            popup.dismiss();
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ProtoHttpClient client = new ProtoHttpClient();
+                                    try {
+                                        client.deleteUser(dmEntryBase.getId());
+                                        new Handler(Looper.getMainLooper()).post(() -> {
+                                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                                            intent.putExtra("data_key", "更新数据");
+                                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                                            popup.dismiss();
+                                        });
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }).start();
+
+
+//                            int click_id = dmEntryBase.getId();
+//                            FeedManager.deleteItemFromAccounttbById(click_id);
+//                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+//                            intent.putExtra("data_key", "更新数据");
+//                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+//                            popup.dismiss();
                         });
                     });
                     if (IGList.isEmpty()) {
@@ -436,18 +467,33 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             }
         });
 
-        List<DMEntryBase> list;
-        list = FeedManager.getTypeList();
-        mData.clear();
-        mData.addAll(list);
-        adapter = new DMEntryAdapter(mData, viewmodel);
-        // 设置优化
-        viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(this));
-        viewbinding.mainRecycler.setHasFixedSize(true);
-        viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
+        ProtoHttpClient.getListData(result -> {
+            Log.i("111111", "列表： " + result);
+            List<DMEntryBase> list = new ArrayList<DMEntryBase>();
+            for (UserOuterClass.User user : result) {
+                DMEntryBase a = getDmEntryBase(user);
+                list.add(a);
+            }
+            list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
+            Log.i("111111", String.valueOf(list));
+            mData.clear();
+            mData.addAll(list);
+            adapter = new DMEntryAdapter(mData, viewmodel);
+            // 设置优化
+            viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(this));
+            viewbinding.mainRecycler.setHasFixedSize(true);
+            viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
+            viewbinding.mainRecycler.setRecycledViewPool(RecyclerViewPool.getSharedPool());
+            viewbinding.mainRecycler.setAdapter(adapter);
 
-        viewbinding.mainRecycler.setAdapter(adapter);
-        viewbinding.mainRecycler.setRecycledViewPool(RecyclerViewPool.getSharedPool());
+        });
+
+//        List<DMEntryBase> list;
+//        list = FeedManager.getTypeList();
+//        mData.clear();
+//        mData.addAll(list);
+//        adapter = new DMEntryAdapter(mData, viewmodel);
+//        viewbinding.mainRecycler.setAdapter(adapter);
 
         viewbinding.mainRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() { // 监听方法
             @Override
@@ -479,14 +525,45 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         });
     }
 
+    @NonNull
+    private static DMEntryBase getDmEntryBase(UserOuterClass.User user) {
+        int id = user.getId();
+        int useId = user.getUseId();
+        String decStr = user.getDecStr();
+        String friendImageId = user.getFriendImageId();
+        String time = user.getTimeStr();
+        String friendVideoId = user.getFriendVideoId();
+        String friendVideoTime = user.getFriendVideoTime();
+        int likeState = user.getLikeState();
+        String likesId = user.getLikesId();
+
+        return new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likeState, likesId);
+    }
+
     public void onResume() {
         super.onResume();
+        if (adapter == null) return;
         eiu.dialogOnPlay();
-        List<DMEntryBase> list;
-        list = FeedManager.getTypeList();
-        mData.clear();
-        mData.addAll(list);
-        adapter.notifyDataSetChanged();
+        ProtoHttpClient.getListData(result -> {
+            Log.i("111111", "列表： " + result);
+            List<DMEntryBase> list = new ArrayList<DMEntryBase>();
+            for (UserOuterClass.User user : result) {
+                DMEntryBase a = getDmEntryBase(user);
+                list.add(a);
+            }
+            list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
+            Log.i("111111", String.valueOf(list));
+            mData.clear();
+            mData.addAll(list);
+            adapter.notifyDataSetChanged();
+
+        });
+
+//        List<DMEntryBase> list;
+//        list = FeedManager.getTypeList();
+//        mData.clear();
+//        mData.addAll(list);
+//        adapter.notifyDataSetChanged();
     }
 
     @Override

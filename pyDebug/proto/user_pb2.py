@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x04user\"\xad\x01\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05useId\x18\x02 \x01(\x05\x12\x0e\n\x06\x64\x65\x63Str\x18\x03 \x01(\t\x12\x15\n\rfriendImageId\x18\x04 \x01(\t\x12\x0f\n\x07timeStr\x18\x05 \x01(\t\x12\x15\n\rfriendVideoId\x18\x06 \x01(\t\x12\x17\n\x0f\x66riendVideoTime\x18\x07 \x01(\t\x12\x11\n\tlikeState\x18\x08 \x01(\x05\x12\x0f\n\x07likesId\x18\t \x01(\t\"\x14\n\x06UserId\x12\n\n\x02id\x18\x01 \x01(\x05\"\x07\n\x05\x45mpty\"%\n\x08UserList\x12\x19\n\x05users\x18\x01 \x03(\x0b\x32\n.user.Userb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x04user\"\xad\x01\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05useId\x18\x02 \x01(\x05\x12\x0e\n\x06\x64\x65\x63Str\x18\x03 \x01(\t\x12\x15\n\rfriendImageId\x18\x04 \x01(\t\x12\x0f\n\x07timeStr\x18\x05 \x01(\t\x12\x15\n\rfriendVideoId\x18\x06 \x01(\t\x12\x17\n\x0f\x66riendVideoTime\x18\x07 \x01(\t\x12\x11\n\tlikeState\x18\x08 \x01(\x05\x12\x0f\n\x07likesId\x18\t \x01(\t\"\x14\n\x06UserId\x12\n\n\x02id\x18\x01 \x01(\x05\"\x07\n\x05\x45mpty\"%\n\x08UserList\x12\x19\n\x05users\x18\x01 \x03(\x0b\x32\n.user.User\"C\n\x11UpdateUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x11\n\tlikeState\x18\x02 \x01(\x05\x12\x0f\n\x07likesId\x18\x03 \x01(\t\"\x1f\n\x11\x44\x65leteUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\x1d\n\nBoolResult\x12\x0f\n\x07success\x18\x01 \x01(\x08\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -39,4 +39,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_EMPTY']._serialized_end=225
   _globals['_USERLIST']._serialized_start=227
   _globals['_USERLIST']._serialized_end=264
+  _globals['_UPDATEUSERREQUEST']._serialized_start=266
+  _globals['_UPDATEUSERREQUEST']._serialized_end=333
+  _globals['_DELETEUSERREQUEST']._serialized_start=335
+  _globals['_DELETEUSERREQUEST']._serialized_end=366
+  _globals['_BOOLRESULT']._serialized_start=368
+  _globals['_BOOLRESULT']._serialized_end=397
 # @@protoc_insertion_point(module_scope)

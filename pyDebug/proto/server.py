@@ -32,7 +32,6 @@ def create_user():
         user = user_pb2.User()
         user.ParseFromString(request.data)
         print(f"收到请求信息 ： {user.useId}")
-
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
         c.execute("INSERT INTO users (useId, decStr, friendImageId, timeStr, friendVideoId, friendVideoTime, likeState, likesId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",(user.useId, user.decStr, user.friendImageId, user.timeStr, user.friendVideoId, user.friendVideoTime, user.likeState, user.likesId))
@@ -48,9 +47,7 @@ def create_user():
     
 @app.route('/list_users', methods=['POST'])
 def list_users():
-
     try:
-        # 解析空消息
         empty = user_pb2.Empty()
         empty.ParseFromString(request.data)
         print(f"收到请求列表信息")
@@ -71,6 +68,44 @@ def list_users():
             u.likesId = row[8]
         conn.close()
         return Response(users.SerializeToString(), mimetype='application/octet-stream')
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
+@app.route('/update_user', methods=['POST'])
+def update_user():
+    try:
+        req = user_pb2.UpdateUserRequest()
+        req.ParseFromString(request.data)
+        print(f"收到请求修改信息")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("UPDATE users SET likeState = ?, likesId = ? WHERE id = ?", (req.likeState, req.likesId, req.id))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        result = user_pb2.BoolResult(success=success)
+        status = 200 if success else 404
+        return Response(result.SerializeToString(), mimetype='application/octet-stream', status=status)
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    try:
+        req = user_pb2.DeleteUserRequest()
+        req.ParseFromString(request.data)
+        print(f"收到请求删除信息")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("DELETE FROM users WHERE id = ?", (req.id,))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        result = user_pb2.BoolResult(success=success)
+        status = 200 if success else 404
+        return Response(result.SerializeToString(), mimetype='application/octet-stream', status=status)
     except Exception as e:
         print(e)
         return Response("error", status=400)

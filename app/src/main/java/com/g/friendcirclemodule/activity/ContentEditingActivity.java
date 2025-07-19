@@ -131,8 +131,8 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                 }
             }
 
-            DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime, 0, "");
-            FeedManager.InsertItemToAccounttb(dmEntryBase);
+//            DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime, 0, "");
+//            FeedManager.InsertItemToAccounttb(dmEntryBase);
 
             // 请求接口
             String finalImagePath = imagePath;
