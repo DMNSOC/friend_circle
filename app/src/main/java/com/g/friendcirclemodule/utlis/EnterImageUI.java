@@ -1,25 +1,21 @@
 package com.g.friendcirclemodule.utlis;
 
 import static com.g.friendcirclemodule.activity.MainActivity.hostActivity;
-
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.dialog.PreviewDialog;
 import com.g.friendcirclemodule.interface_method.EnterImageUIProvider;
 import com.g.mediaselector.model.ResourceItem;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +25,6 @@ public class EnterImageUI implements EnterImageUIProvider {
     PreviewDialog dialog;
     @Override
     public void bindImageView(FriendEntryBinding binding, List<ResourceItem> list) {
-        Log.i("2222222", String.valueOf(list.size()));
         if (list.size() > 1) {
 
             binding.ceRelative0.setVisibility(View.GONE);

@@ -20,6 +20,7 @@
     <string name="tip_title_2">请求成功</string>
     <string name="tip_title_3">请求失败</string>
     <string name="tip_title_4">请求异常</string>
+    <string name="tip_title_5">网络异常或服务器未启动，请重试</string>
 
 
 </resources>

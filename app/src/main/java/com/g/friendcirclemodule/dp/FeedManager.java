@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +16,7 @@ public class FeedManager {
         db = helper.getWritableDatabase();
     }
     // int friendName, int friendHead, String decStr, Integer[] friendImageId, String time, Integer friendVideoId
-    public static List<DMEntryBase>getTypeList(){
+    public static List<DMEntryBase> getTypeList(){
         List<DMEntryBase> list = new ArrayList<>();
         String sql = "SELECT * FROM accounttb ORDER BY id DESC";
         Cursor cursor = db.rawQuery(sql, null);
@@ -36,7 +35,7 @@ public class FeedManager {
         }
         return list;
     }
-    public static List<DMEntryUseInfoBase>getUseInfo(int uId){
+    public static List<DMEntryUseInfoBase> getUseInfo(int uId){
         List<DMEntryUseInfoBase> list = new ArrayList<>();
         String sql = "SELECT * FROM userinfo WHERE useId=? ORDER BY id DESC";
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(uId)});
@@ -91,7 +90,7 @@ public class FeedManager {
     };
 
     /*
-    表插入修改
+    用户信息表插入修改
      */
     public static void InsertItemToUserInfo(DMEntryUseInfoBase bean){
         ContentValues values = new ContentValues();

@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,13 +39,12 @@ import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.model.MainActivityModel;
 import com.g.friendcirclemodule.dialog.SettingDialog;
 import com.g.friendcirclemodule.utlis.EnterImageUI;
-import com.g.friendcirclemodule.utlis.ProtoHttpClient;
+import com.g.friendcirclemodule.utlis.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -209,7 +207,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     vb.dmeaMain.setLayoutParams(params);
 
                     DMEntryBase dmEntryBase = (DMEntryBase) base.mData.get(base.pos - 1);
-                    Log.i("333333", String.valueOf(base.mData.get(base.pos - 1)));
                     // 设置缓存的头像信息
                     List<DMEntryUseInfoBase> infoBaseList = FeedManager.getUseInfo(dmEntryBase.getUseId());
                     if (!infoBaseList.isEmpty()) {
@@ -245,7 +242,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         vb.friendEntryDec.setText(dmEntryBase.getDecStr());
                     }
                     vb.friendEntryTime.setText(vb.getRoot().getContext().getString(R.string.entry_time, String.valueOf(dmEntryBase.getTime())));
-//                    vb.mainRvImages.setLayoutManager(new GridLayoutManager(MainActivity.this, 3));
 
                     vb.catalogsList.setVisibility(View.GONE);
 
@@ -350,61 +346,33 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                 likeState = 1;
                             }
 
-
-                            int finalLikeState = likeState;
-                            StringBuilder finalLikeStr = likeStr;
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ProtoHttpClient client = new ProtoHttpClient();
-                                    try {
-                                        client.updateUser(dmEntryBase.getId(), finalLikeState, finalLikeStr.toString());
-                                        new Handler(Looper.getMainLooper()).post(() -> {
-                                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-                                            intent.putExtra("data_key", "更新数据");
-                                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-                                            popup.dismiss();
-                                        });
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            }).start();
-//                            DMEntryBase aeb = new DMEntryBase(dmEntryBase.getId(), dmEntryBase.getUseId(), dmEntryBase.getDecStr(), dmEntryBase.getFriendImageId(), dmEntryBase.getTime(), dmEntryBase.getFriendVideoId(), dmEntryBase.getFriendVideoTime(), likeState, likeStr.toString());
-//                            FeedManager.UpdateItemToAccounttb(aeb);
-//                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-//                            intent.putExtra("data_key", "更新数据");
-//                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-//                            popup.dismiss();
+                            // 请求更新数据
+                            UserOuterClass.UpdateUserRequest user = UserOuterClass.UpdateUserRequest.newBuilder()
+                                    .setId(dmEntryBase.getId())
+                                    .setLikeState(likeState)
+                                    .setLikesId(likeStr.toString())
+                                    .build();
+                            ProtoApiClient.achieveProto("/update_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
+                                Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                                intent.putExtra("data_key", "更新数据");
+                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                                popup.dismiss();
+                            });
 
                         });
                         moreDialog.moreDelete.setOnClickListener(v1 -> { // 删除条目
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ProtoHttpClient client = new ProtoHttpClient();
-                                    try {
-                                        client.deleteUser(dmEntryBase.getId());
-                                        new Handler(Looper.getMainLooper()).post(() -> {
-                                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-                                            intent.putExtra("data_key", "更新数据");
-                                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-                                            popup.dismiss();
-                                        });
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            }).start();
+                            // 请求更新数据
+                            UserOuterClass.DeleteUserRequest user = UserOuterClass.DeleteUserRequest.newBuilder()
+                                    .setId(dmEntryBase.getId())
+                                    .build();
+                            ProtoApiClient.achieveProto("/delete_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
+                                Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                                intent.putExtra("data_key", "更新数据");
+                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                                popup.dismiss();
+                            });
 
-
-//                            int click_id = dmEntryBase.getId();
-//                            FeedManager.deleteItemFromAccounttbById(click_id);
-//                            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-//                            intent.putExtra("data_key", "更新数据");
-//                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-//                            popup.dismiss();
                         });
                     });
                     if (IGList.isEmpty()) {
@@ -467,20 +435,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             }
         });
 
-        ProtoHttpClient.getListData(result -> {
-            Log.i("111111", "列表： " + result);
+        // 列表信息请求
+        UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
+        ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
             List<DMEntryBase> list = new ArrayList<>();
-            for (UserOuterClass.User user : result) {
+            for (UserOuterClass.User user : result.getUsersList()) {
                 DMEntryBase a = getDmEntryBase(user);
                 list.add(a);
             }
             list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
-            Log.i("111111", String.valueOf(list));
             mData.clear();
             mData.addAll(list);
             adapter = new DMEntryAdapter(mData, viewmodel);
             // 设置优化
-            viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(this));
+            viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(getBaseContext()));
             viewbinding.mainRecycler.setHasFixedSize(true);
             viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
             viewbinding.mainRecycler.setRecycledViewPool(RecyclerViewPool.getSharedPool());
@@ -544,18 +512,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         super.onResume();
         if (adapter == null) return;
         eiu.dialogOnPlay();
-        ProtoHttpClient.getListData(result -> {
-            Log.i("111111", "列表： " + result);
+
+        UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
+        ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
             List<DMEntryBase> list = new ArrayList<>();
-            for (UserOuterClass.User user : result) {
+            for (UserOuterClass.User user : result.getUsersList()) {
                 DMEntryBase a = getDmEntryBase(user);
                 list.add(a);
             }
             list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
-            Log.i("111111", String.valueOf(list));
             mData.clear();
             mData.addAll(list);
-            adapter.notifyDataSetChanged();
+            adapter = new DMEntryAdapter(mData, viewmodel);
+            // 设置优化
+            viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(this));
+            viewbinding.mainRecycler.setHasFixedSize(true);
+            viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
+            viewbinding.mainRecycler.setRecycledViewPool(RecyclerViewPool.getSharedPool());
+            viewbinding.mainRecycler.setAdapter(adapter);
 
         });
 

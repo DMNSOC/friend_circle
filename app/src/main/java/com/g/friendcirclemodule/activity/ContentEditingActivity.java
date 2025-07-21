@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.lifecycle.Observer;
@@ -20,17 +19,19 @@ import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
-import com.g.friendcirclemodule.utlis.ProtoHttpClient;
+import com.g.friendcirclemodule.utlis.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
-import java.io.IOException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import user.UserOuterClass;
 
 public class ContentEditingActivity extends BaseActivity<ActivityContentEditingBinding, ContentEditingActivityModel> {
     ImageGridAdapter adapter;
@@ -65,7 +66,6 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                 ViewGroup.LayoutParams params = vb.ceRib.getLayoutParams();
 
                 int width = (sWidth - UtilityMethod.dpToPx(ContentEditingActivity.this, 90)) / itemNum;
-                Log.i("tessssst", String.valueOf(width));
                 int dp = UtilityMethod.pxToDp(ContentEditingActivity.this, width) - 2;
                 params.width = UtilityMethod.dpToPx(getBaseContext(), dp);
                 params.height = UtilityMethod.dpToPx(getBaseContext(), dp);
@@ -129,24 +129,19 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                 }
             }
 
-//            DMEntryBase dmEntryBase = new DMEntryBase((int)id, useId, dec, imagePath, time, videoPath, friendVideoTime, 0, "");
-//            FeedManager.InsertItemToAccounttb(dmEntryBase);
-
             // 请求接口
-            String finalImagePath = imagePath;
-            String finalVideoPath = videoPath;
-            String finalFriendVideoTime = friendVideoTime.toString();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    ProtoHttpClient client = new ProtoHttpClient();
-                    try {
-                        client.createUser(useId, dec, finalImagePath, time, finalVideoPath, finalFriendVideoTime, 0, "");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }).start();
+            UserOuterClass.User user = UserOuterClass.User.newBuilder()
+                    .setUseId(useId)
+                    .setDecStr(dec)
+                    .setFriendImageId(imagePath)
+                    .setTimeStr(time)
+                    .setFriendVideoId(videoPath)
+                    .setFriendVideoTime(friendVideoTime.toString())
+                    .setLikeState(0)
+                    .setLikesId("")
+                    .build();
+            UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
+            ProtoApiClient.achieveProto("/create_user", user, UserOuterClass.UserId.class, this, result -> {});
 
             finish();
         });

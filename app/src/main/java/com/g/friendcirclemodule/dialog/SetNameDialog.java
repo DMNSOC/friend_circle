@@ -13,7 +13,6 @@ import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
 import com.g.friendcirclemodule.utlis.SafeHandler;
-
 import java.util.List;
 
 public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {

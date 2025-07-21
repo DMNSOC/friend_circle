@@ -3,13 +3,11 @@ package com.g.friendcirclemodule.utlis;
 import android.content.Context;
 import android.media.AudioManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.Player;

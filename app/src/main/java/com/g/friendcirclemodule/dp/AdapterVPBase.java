@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.dp;
 
 import androidx.viewbinding.ViewBinding;
-
 import java.util.List;
 
 public class AdapterVPBase { // viewbinding  pos

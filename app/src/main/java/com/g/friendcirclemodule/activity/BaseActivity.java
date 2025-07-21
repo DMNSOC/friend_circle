@@ -3,7 +3,6 @@ package com.g.friendcirclemodule.activity;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -61,10 +60,8 @@ public abstract class BaseActivity<VB extends ViewBinding,VM extends ViewModel> 
         boolean isNightMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
 
         if (isNightMode) {
-            Log.i("Tesssss", "11111");
             getWindow().getDecorView().setBackgroundColor(getColor(R.color.night_background));
         } else {
-            Log.i("Tesssss", "22222");
             getWindow().getDecorView().setBackgroundColor(getColor(R.color.light_background));
         }
     }

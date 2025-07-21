@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
@@ -68,7 +67,6 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 vh.binding.videoView.setPlaybackStateListener();
                 playerPosList.add(position);
                 playerList.add(new PDPlayerBase(player, position));
-                Log.i("testtttt", "2222222");
                 if (position != 0 && !isPlay) {
                     isPlay = true;
                     playVideoAtPosition(position);
