@@ -1,10 +1,15 @@
 package com.g.friendcirclemodule.activity;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
 import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,10 +29,12 @@ public abstract class BaseActivity<VB extends ViewBinding,VM extends ViewModel> 
     public VB viewbinding;
     public VM viewmodel;
     public int sWidth;
+    public View decorView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        decorView = getWindow().getDecorView();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         initViewBinding(this, this.getBaseContext());
         try {
@@ -66,29 +73,24 @@ public abstract class BaseActivity<VB extends ViewBinding,VM extends ViewModel> 
         }
     }
 
-    // 获取系统状态栏高度
-    int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
     // 设置自定义状态栏高度
     protected void adjustCustomStatusBar(View customStatusBar) {
-        // 获取系统状态栏高度
-        int statusBarHeight = getStatusBarHeight();
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) customStatusBar.getLayoutParams();
-        params.topMargin = statusBarHeight;  // 下移自定义状态栏
-        customStatusBar.setLayoutParams(params);
+        ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) customStatusBar.getLayoutParams();
+            params.topMargin = statusBarHeight;  // 下移自定义状态栏
+            customStatusBar.setLayoutParams(params);
+            return insets;
+        });
     }
 
     protected void initView() {
-        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         Point size = new Point();
-        wm.getDefaultDisplay().getRealSize(size); // 包含导航栏和状态栏
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
+        Rect bounds = windowMetrics.getBounds();
+        size.x = bounds.width();
+        size.y = bounds.height();
         sWidth = Math.min(size.x, size.y);
     }
 

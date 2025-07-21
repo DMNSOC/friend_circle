@@ -17,6 +17,7 @@ exoplayer = "1.3.0"
 exoplayerui = "1.3.0"
 ucrop = "2.2.8"
 photoview = "2.3.0"
+protobuf = "0.9.4"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -41,4 +42,5 @@ photoview = { group = "com.github.chrisbanes", name = "PhotoView", version.ref =
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+google-protobuf = {id = "com.google.protobuf", version.ref = "protobuf" }
 

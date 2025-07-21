@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -385,8 +387,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             }
         });
 
-        getStatusBarHeight();
-        viewbinding.mainToolbar.setPadding(0,getStatusBarHeight(),0,0);
+        // 设置状态栏高度
+        ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            viewbinding.mainToolbar.setPadding(0, statusBarHeight,0,0);
+            return insets;
+        });
+
         initInsets(viewbinding.main);
         hostActivity = this;
         viewbinding.mainBtnBack.setOnClickListener(v -> { finish();});
