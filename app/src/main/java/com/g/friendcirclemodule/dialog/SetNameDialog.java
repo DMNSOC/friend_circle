@@ -1,6 +1,7 @@
 package com.g.friendcirclemodule.dialog;
 
 import static com.g.friendcirclemodule.activity.MainActivity.uid;
+import static com.g.friendcirclemodule.utlis.ProtoApiClient.baseUrl;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +15,9 @@ import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
+import com.g.friendcirclemodule.utlis.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.SafeHandler;
-import java.util.List;
+import user.UserOuterClass;
 
 public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
     private final Context context;
@@ -32,25 +34,17 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
             cancel();
         });
         viewbinding.setNameBtnEnsure.setOnClickListener(v -> {
-            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uid);
-            long id = 1;
             int useId = uid;
             String friendName = String.valueOf(viewbinding.setNameEt.getText());
-            String friendHead = "";
-            String friendBg = "";
-            if (!coverInfoBaseList.isEmpty()) {
-                DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
-                id = dmEntryUseInfoBase.getId();
-                useId = dmEntryUseInfoBase.getUseId();
-                friendHead = dmEntryUseInfoBase.getFriendHead();
-                friendBg = dmEntryUseInfoBase.getFriendBg();
-                if (friendName.isEmpty()) {
-                    friendName = dmEntryUseInfoBase.getFriendName();
-                }
-            }
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
-            FeedManager.InsertItemToUserInfo(dmEntryBase);
-            cancel();
+            UserOuterClass.Info info = UserOuterClass.Info.newBuilder()
+                    .setUseId(useId)
+                    .setFriendName(friendName)
+                    .build();
+            ProtoApiClient.achieveProto("/update_info", info, UserOuterClass.Info.class, null, res -> {
+                DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(res.getId(), res.getUseId(), res.getFriendName(), res.getFriendHead(), res.getFriendBg());
+                FeedManager.InsertItemToUserInfo(dmEntryBase);
+                cancel();
+            });
         });
         Handler mHandler = new SafeHandler(context, Looper.getMainLooper());
         mHandler.sendEmptyMessageDelayed(1,300);
