@@ -172,68 +172,36 @@ def list_info():
         print(e)
         return Response("error", status=400)
 
-# @app.route('/update_info', methods=['POST'])
-# def update_info():
-#     try:
-#         req = user_pb2.Info()
-#         req.ParseFromString(request.data)
-#         print(f"收到请求修改信息")
-#         conn = sqlite3.connect(DB_FILE)
-#         c = conn.cursor()
-#         c.execute("UPDATE info SET friendName = ?, friendHead = ?, friendBg = ? WHERE useId = ?", (req.friendName, req.friendHead, req.friendBg, req.useId))
-#         conn.commit()
-#         success = c.rowcount > 0
-#         if success:
-#             c.execute("SELECT id, useId, friendName, friendHead, friendBg FROM info WHERE useId = ?", (req.useId,))
-#             row = c.fetchone()
-#             if row:
-#                 user = user_pb2.Info(id=row[0], useId=row[1], friendName=row[2], friendHead=row[3], friendBg=row[4])
-#                 conn.close()
-#                 return Response(user.SerializeToString(), mimetype='application/octet-stream')
-#             else:
-#                 conn.close()
-#                 user = user_pb2.Info()
-#                 return Response(user.SerializeToString(), mimetype='application/octet-stream', status=404)
-#         else:
-#             conn.close()
-#             user = user_pb2.Info()
-#             return Response(user.SerializeToString(), mimetype='application/octet-stream', status=404)
-#     except Exception as e:
-#             print(e)
-#             return Response("error", status=400)
-
-
 @app.route('/update_info', methods=['POST'])
 def update_info():
-    req = user_pb2.Info()
-    req.ParseFromString(request.data)
-    print(f"收到请求修改信息")
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    # 查询老数据
-    c.execute("SELECT id, useId, friendName, friendHead, friendBg FROM info WHERE useId = ?", (req.useId,))
-    row = c.fetchone()
-    if not row:
+    try:
+        req = user_pb2.Info()
+        req.ParseFromString(request.data)
+        print(f"收到请求修改信息")
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT id, useId, friendName, friendHead, friendBg FROM info WHERE useId = ?", (req.useId,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return Response(user_pb2.Info().SerializeToString(), mimetype='application/octet-stream', status=404)
+
+        new_friendName = req.friendName if req.HasField("friendName") else row["friendName"]
+        new_friendHead = req.friendHead if req.HasField("friendHead") else row["friendHead"]
+        new_friendBg = req.friendBg if req.HasField("friendBg") else row["friendBg"]
+
+        c.execute("UPDATE info SET friendName = ?, friendHead = ?, friendBg = ? WHERE useId = ?", (new_friendName, new_friendHead, new_friendBg, req.useId))
+        conn.commit()
+
+        c.execute("SELECT id, useId, friendName, friendHead, friendBg FROM info WHERE useId = ?", (req.useId,))
+        row = c.fetchone()
+        user = user_pb2.Info(id=row[0], useId=row[1], friendName=row[2], friendHead=row[3], friendBg=row[4])
         conn.close()
-        return Response(user_pb2.Info().SerializeToString(), mimetype='application/octet-stream', status=404)
-
-    # 判断哪些字段需要更新
-    new_friendName = req.friendName if req.HasField("friendName") else row["friendName"]
-    new_friendHead = req.friendHead if req.HasField("friendHead") else row["friendHead"]
-    new_friendBg = req.friendBg if req.HasField("friendBg") else row["friendBg"]
-
-    # 更新
-    c.execute("UPDATE info SET friendName = ?, friendHead = ?, friendBg = ? WHERE useId = ?", (new_friendName, new_friendHead, new_friendBg, req.useId))
-    conn.commit()
-
-    # 返回最新
-    c.execute("SELECT id, useId, friendName, friendHead, friendBg FROM info WHERE useId = ?", (req.useId,))
-    row = c.fetchone()
-    user = user_pb2.Info(id=row[0], useId=row[1], friendName=row[2], friendHead=row[3], friendBg=row[4])
-    conn.close()
-    return Response(user.SerializeToString(), mimetype='application/octet-stream')
-
+        return Response(user.SerializeToString(), mimetype='application/octet-stream')
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
 
 @app.route('/delete_user', methods=['POST'])
 def delete_user():
