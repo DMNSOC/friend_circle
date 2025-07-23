@@ -8,10 +8,9 @@ public class DMEntryBase {
     String time;
     String friendVideoId;
     String friendVideoTime;
-    int likeState;
     String likesId;
 
-    public DMEntryBase(int id, int useId, String decStr, String friendImageId, String time, String friendVideoId, String friendVideoTime, int likeState, String likesId) {
+    public DMEntryBase(int id, int useId, String decStr, String friendImageId, String time, String friendVideoId, String friendVideoTime, String likesId) {
         this.id = id;
         this.useId = useId;
         this.decStr = decStr;
@@ -19,7 +18,6 @@ public class DMEntryBase {
         this.time = time;
         this.friendVideoId = friendVideoId;
         this.friendVideoTime = friendVideoTime;
-        this.likeState = likeState;
         this.likesId = likesId;
     }
 
@@ -73,14 +71,6 @@ public class DMEntryBase {
 
     public String getFriendVideoTime() {
         return friendVideoTime;
-    }
-
-    public int getLikeState() {
-        return likeState;
-    }
-
-    public void setLikeState(int likeState) {
-        this.likeState = likeState;
     }
 
     public String getLikesId() {

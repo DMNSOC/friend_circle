@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x04user\"\xad\x01\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05useId\x18\x02 \x01(\x05\x12\x0e\n\x06\x64\x65\x63Str\x18\x03 \x01(\t\x12\x15\n\rfriendImageId\x18\x04 \x01(\t\x12\x0f\n\x07timeStr\x18\x05 \x01(\t\x12\x15\n\rfriendVideoId\x18\x06 \x01(\t\x12\x17\n\x0f\x66riendVideoTime\x18\x07 \x01(\t\x12\x11\n\tlikeState\x18\x08 \x01(\x05\x12\x0f\n\x07likesId\x18\t \x01(\t\"\x14\n\x06UserId\x12\n\n\x02id\x18\x01 \x01(\x05\"\x07\n\x05\x45mpty\"%\n\x08UserList\x12\x19\n\x05users\x18\x01 \x03(\x0b\x32\n.user.User\"C\n\x11UpdateUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x11\n\tlikeState\x18\x02 \x01(\x05\x12\x0f\n\x07likesId\x18\x03 \x01(\t\"\x1f\n\x11\x44\x65leteUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\x1d\n\nBoolResult\x12\x0f\n\x07success\x18\x01 \x01(\x08\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x04user\"\x9a\x01\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05useId\x18\x02 \x01(\x05\x12\x0e\n\x06\x64\x65\x63Str\x18\x03 \x01(\t\x12\x15\n\rfriendImageId\x18\x04 \x01(\t\x12\x0f\n\x07timeStr\x18\x05 \x01(\t\x12\x15\n\rfriendVideoId\x18\x06 \x01(\t\x12\x17\n\x0f\x66riendVideoTime\x18\x07 \x01(\t\x12\x0f\n\x07likesId\x18\x08 \x01(\t\"\x14\n\x06UserId\x12\n\n\x02id\x18\x01 \x01(\x05\"\x07\n\x05\x45mpty\"%\n\x08UserList\x12\x19\n\x05users\x18\x01 \x03(\x0b\x32\n.user.User\"C\n\x11UpdateUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x11\n\tlikeState\x18\x02 \x01(\x05\x12\x0f\n\x07likesId\x18\x03 \x01(\t\"\x1f\n\x11\x44\x65leteUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\x1d\n\nBoolResult\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x95\x01\n\x04Info\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05useId\x18\x02 \x01(\x05\x12\x17\n\nfriendName\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x17\n\nfriendHead\x18\x04 \x01(\tH\x01\x88\x01\x01\x12\x15\n\x08\x66riendBg\x18\x05 \x01(\tH\x02\x88\x01\x01\x42\r\n\x0b_friendNameB\r\n\x0b_friendHeadB\x0b\n\t_friendBg\"\x14\n\x06InfoId\x12\n\n\x02id\x18\x01 \x01(\x05\"%\n\x08InfoList\x12\x19\n\x05infos\x18\x01 \x03(\x0b\x32\n.user.Info\">\n\tMediaFile\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\"9\n\x17\x42\x61tchMediaUploadRequest\x12\x1e\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x0f.user.MediaFile\"h\n\x11MediaUploadResult\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x10\n\x08media_id\x18\x02 \x01(\t\x12\x0b\n\x03url\x18\x03 \x01(\t\x12\x0f\n\x07success\x18\x04 \x01(\x08\x12\x11\n\terror_msg\x18\x05 \x01(\t\"D\n\x18\x42\x61tchMediaUploadResponse\x12(\n\x07results\x18\x01 \x03(\x0b\x32\x17.user.MediaUploadResultb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,17 +32,31 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'user_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_USER']._serialized_start=21
-  _globals['_USER']._serialized_end=194
-  _globals['_USERID']._serialized_start=196
-  _globals['_USERID']._serialized_end=216
-  _globals['_EMPTY']._serialized_start=218
-  _globals['_EMPTY']._serialized_end=225
-  _globals['_USERLIST']._serialized_start=227
-  _globals['_USERLIST']._serialized_end=264
-  _globals['_UPDATEUSERREQUEST']._serialized_start=266
-  _globals['_UPDATEUSERREQUEST']._serialized_end=333
-  _globals['_DELETEUSERREQUEST']._serialized_start=335
-  _globals['_DELETEUSERREQUEST']._serialized_end=366
-  _globals['_BOOLRESULT']._serialized_start=368
-  _globals['_BOOLRESULT']._serialized_end=397
+  _globals['_USER']._serialized_end=175
+  _globals['_USERID']._serialized_start=177
+  _globals['_USERID']._serialized_end=197
+  _globals['_EMPTY']._serialized_start=199
+  _globals['_EMPTY']._serialized_end=206
+  _globals['_USERLIST']._serialized_start=208
+  _globals['_USERLIST']._serialized_end=245
+  _globals['_UPDATEUSERREQUEST']._serialized_start=247
+  _globals['_UPDATEUSERREQUEST']._serialized_end=314
+  _globals['_DELETEUSERREQUEST']._serialized_start=316
+  _globals['_DELETEUSERREQUEST']._serialized_end=347
+  _globals['_BOOLRESULT']._serialized_start=349
+  _globals['_BOOLRESULT']._serialized_end=378
+  _globals['_INFO']._serialized_start=381
+  _globals['_INFO']._serialized_end=530
+  _globals['_INFOID']._serialized_start=532
+  _globals['_INFOID']._serialized_end=552
+  _globals['_INFOLIST']._serialized_start=554
+  _globals['_INFOLIST']._serialized_end=591
+  _globals['_MEDIAFILE']._serialized_start=593
+  _globals['_MEDIAFILE']._serialized_end=655
+  _globals['_BATCHMEDIAUPLOADREQUEST']._serialized_start=657
+  _globals['_BATCHMEDIAUPLOADREQUEST']._serialized_end=714
+  _globals['_MEDIAUPLOADRESULT']._serialized_start=716
+  _globals['_MEDIAUPLOADRESULT']._serialized_end=820
+  _globals['_BATCHMEDIAUPLOADRESPONSE']._serialized_start=822
+  _globals['_BATCHMEDIAUPLOADRESPONSE']._serialized_end=890
 # @@protoc_insertion_point(module_scope)

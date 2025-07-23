@@ -1,27 +1,32 @@
 package com.g.friendcirclemodule.activity;
 
+import static com.g.friendcirclemodule.activity.MainActivity.uid;
+import static com.g.friendcirclemodule.utlis.ProtoApiClient.baseUrl;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import androidx.annotation.Nullable;
+import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.ActivityHeadSettingBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
+import com.g.friendcirclemodule.utlis.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
+import com.google.protobuf.ByteString;
 import com.yalantis.ucrop.UCrop;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import user.UserOuterClass;
 
 public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding, BaseModel> {
 
-    int uId = 1;
+    int uId = uid;
     Uri htUri = Uri.parse("");
 
     @Override
@@ -32,14 +37,11 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
         if (!headInfoBaseList.isEmpty()) {
             DMEntryUseInfoBase dmEntryUseInfoBase = headInfoBaseList.get(0);
             if (dmEntryUseInfoBase.getFriendHead() != "" && dmEntryUseInfoBase.getFriendHead() != null) {
-                Bitmap useHeadBitmap = null;
-                try {
-                    useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
-                    htUri = Uri.parse(dmEntryUseInfoBase.getFriendHead());
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                viewbinding.headTx.setImageBitmap(useHeadBitmap);
+                Glide.with(getBaseContext())
+                        .load(dmEntryUseInfoBase.getFriendHead())
+                        .placeholder(R.mipmap.tx)
+                        .override(300, 300)
+                        .into(viewbinding.headTx); // Glide加载
             } else {
                 viewbinding.headTx.setImageResource(R.mipmap.tx);
             }
@@ -60,24 +62,39 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
         });
 
         viewbinding.headBtnSet.setOnClickListener(v -> {
-            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
 
-            long id = 1;
-            int useId = 1;
-            String friendName = "";
-            String friendHead = String.valueOf(htUri);
-            String friendBg = "";
-            if (!coverInfoBaseList.isEmpty()) {
-                DMEntryUseInfoBase dmEntryUseInfoBase = coverInfoBaseList.get(0);
-                id = dmEntryUseInfoBase.getId();
-                friendName = dmEntryUseInfoBase.getFriendName();
-                useId = dmEntryUseInfoBase.getUseId();
-                friendBg = dmEntryUseInfoBase.getFriendBg();
+            int useId = uId;
+
+            UserOuterClass.BatchMediaUploadRequest.Builder batchReqBuilder = UserOuterClass.BatchMediaUploadRequest.newBuilder();
+            String filename = UtilityMethod.getFileName(this, htUri); // 你可以自定义实现
+            String mimeType = getContentResolver().getType(htUri);
+            byte[] bytes = null; // 复用前面的通用方法
+            try {
+                bytes = UtilityMethod.readFileToBytes(this, htUri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(id, useId, friendName, friendHead, friendBg);
-            FeedManager.InsertItemToUserInfo(dmEntryBase);
+            UserOuterClass.MediaFile mediaFile = UserOuterClass.MediaFile.newBuilder()
+                    .setFilename(filename)
+                    .setMimeType(mimeType == null ? "" : mimeType)
+                    .setData(ByteString.copyFrom(bytes))
+                    .build();
+            batchReqBuilder.addFiles(mediaFile);
+            UserOuterClass.BatchMediaUploadRequest batchReq = batchReqBuilder.build();
+            ProtoApiClient.achieveProto("/batch_upload_media", batchReq, UserOuterClass.BatchMediaUploadRequest.class, this, result -> {
 
-            finish();
+                List<UserOuterClass.MediaFile> mediaList = result.getFilesList();
+                UserOuterClass.Info info = UserOuterClass.Info.newBuilder()
+                        .setUseId(useId)
+                        .setFriendHead(baseUrl + mediaList.get(0).getData().toStringUtf8())
+                        .build();
+                ProtoApiClient.achieveProto("/update_info", info, UserOuterClass.Info.class, this, res -> {
+                    DMEntryUseInfoBase dmEntryBase = new DMEntryUseInfoBase(res.getId(), res.getUseId(), res.getFriendName(), res.getFriendHead(), res.getFriendBg());
+                    FeedManager.InsertItemToUserInfo(dmEntryBase);
+                    finish();
+                });
+
+            });
         });
     }
 
@@ -114,7 +131,7 @@ public class HeadSettingActivity extends BaseActivity<ActivityHeadSettingBinding
             Bitmap useHeadBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(useHeadUri));
             htUri = useHeadUri;
             viewbinding.headTx.setImageBitmap(useHeadBitmap);
-            UtilityMethod.saveBitmapToDirectory(useHeadBitmap, this, "Head");
+//            UtilityMethod.saveBitmapToDirectory(useHeadBitmap, this, "Head");
 
         } catch (IOException ignored) {}
     }

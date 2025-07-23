@@ -6,14 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +25,7 @@ import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.adapter.DMEntryAdapter;
 import com.g.friendcirclemodule.adapter.RecyclerViewPool;
@@ -46,13 +45,12 @@ import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import com.g.friendcirclemodule.databinding.MoreDialogBinding;
-
 import user.UserOuterClass;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityModel> {
@@ -63,8 +61,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     int offsetY = 0;
     private Handler longPressHandler;
     private Runnable longPressRunnable;
-    boolean isOpen = true;
+    boolean isOpen = false;
     boolean isReceiverRegistered = false;
+    public static int uid;
 
     EnterImageUI eiu = new EnterImageUI();
 
@@ -100,6 +99,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     @Override
     protected void initData() {
         super.initData();
+        uid = UtilityMethod.getUniqueId(this);
     }
 
     @Override
@@ -115,17 +115,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
                     MainTopBinding vb = (MainTopBinding)base.vb;
                     // 设置缓存的头像信息
-                    List<DMEntryUseInfoBase> infoBaseList = FeedManager.getUseInfo(1);
+                    List<DMEntryUseInfoBase> infoBaseList = FeedManager.getUseInfo(uid);
                     if (!infoBaseList.isEmpty()) {
                         DMEntryUseInfoBase dmEntryUseInfoBase = infoBaseList.get(0);
+                        Log.i("Testttttttt", String.valueOf(infoBaseList));
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendHead(), "") && dmEntryUseInfoBase.getFriendHead() != null) {
-                            Bitmap croppedBitmap;
-                            try {
-                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
-                            } catch (FileNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
-                            vb.mainTopTx.setImageBitmap(croppedBitmap);
+                            Glide.with(getBaseContext())
+                                    .load(dmEntryUseInfoBase.getFriendHead())
+                                    .placeholder(R.mipmap.tx)
+                                    .override(300, 300)
+                                    .into(vb.mainTopTx); // Glide加载
                         } else {
                             vb.mainTopTx.setImageResource(R.mipmap.tx);
                         }
@@ -137,15 +136,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         }
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendBg(), "") && dmEntryUseInfoBase.getFriendBg() != null) {
-                            Bitmap croppedBitmap;
-                            try {
-                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendBg())));
-                            } catch (FileNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
+//                            Bitmap croppedBitmap;
+//                            try {
+//                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendBg())));
+//                            } catch (FileNotFoundException e) {
+//                                throw new RuntimeException(e);
+//                            }
 
                             vb.mainTopBg.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                            vb.mainTopBg.setImageBitmap(croppedBitmap);
+//                            vb.mainTopBg.setImageBitmap(croppedBitmap);
+                            Glide.with(getBaseContext())
+                                    .load(dmEntryUseInfoBase.getFriendBg())
+                                    .placeholder(R.mipmap.tx)
+                                    .override(300, 300)
+                                    .into(vb.mainTopBg); // Glide加载
                         } else {
                             vb.mainTopBg.setImageResource(R.mipmap.bz1);
                         }
@@ -202,12 +206,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         moreDialog.show();
                     });
                 } else {
-                    FriendEntryBinding vb = (FriendEntryBinding)base.vb;
 
+                    // 朋友圈内容条目
+                    FriendEntryBinding vb = (FriendEntryBinding)base.vb;
                     ViewGroup.LayoutParams params = vb.dmeaMain.getLayoutParams();
                     params.width = sWidth;
                     vb.dmeaMain.setLayoutParams(params);
-
                     DMEntryBase dmEntryBase = (DMEntryBase) base.mData.get(base.pos - 1);
                     // 设置缓存的头像信息
                     List<DMEntryUseInfoBase> infoBaseList = FeedManager.getUseInfo(dmEntryBase.getUseId());
@@ -215,13 +219,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         DMEntryUseInfoBase dmEntryUseInfoBase = infoBaseList.get(0);
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendHead(), "") && dmEntryUseInfoBase.getFriendHead() != null) {
-                            Bitmap croppedBitmap;
-                            try {
-                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
-                            } catch (FileNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
-                            vb.friendEntryHead.setImageBitmap(croppedBitmap);
+//                            Bitmap croppedBitmap;
+//                            try {
+//                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
+//                            } catch (FileNotFoundException e) {
+//                                throw new RuntimeException(e);
+//                            }
+                            Glide.with(getBaseContext())
+                                    .load(dmEntryUseInfoBase.getFriendHead())
+                                    .placeholder(R.mipmap.tx)
+                                    .override(300, 300)
+                                    .into(vb.friendEntryHead); // Glide加载
+//                            vb.friendEntryHead.setImageBitmap(croppedBitmap);
                         } else {
                             vb.friendEntryHead.setImageResource(R.mipmap.tx);
                         }
@@ -247,9 +256,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
                     vb.catalogsList.setVisibility(View.GONE);
 
+                    String likesId = dmEntryBase.getLikesId();
+                    String[] likesArr = likesId.split(",");  // 按逗号分割
                     if (!Objects.equals(dmEntryBase.getLikesId(), "")) {
-                        String likesId = dmEntryBase.getLikesId();
-                        String[] likesArr = likesId.split(",");  // 按逗号分割
                         if (likesArr.length > 0) {
                             vb.catalogsList.setVisibility(View.VISIBLE);
                             String str = "";
@@ -303,7 +312,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     }
 
                     MoreDialogBinding moreDialog = MoreDialogBinding.inflate(LayoutInflater.from(vb.getRoot().getContext()), vb.getRoot(),false);
-                    if (dmEntryBase.getLikeState() == 1) {
+                    Log.i("889889", Arrays.toString(likesArr) + "---" + uid);
+                    moreDialog.moreDelete.setVisibility(dmEntryBase.getUseId() == uid ? View.VISIBLE : View.GONE);
+                    if (Arrays.asList(likesArr).contains(String.valueOf(uid))) {
                         moreDialog.likeText.setVisibility(View.GONE);
                         moreDialog.likeRse.setVisibility(View.VISIBLE);
                     } else {
@@ -319,13 +330,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         popup.showAsDropDown(vb.friendEntryMore, -120, 0);
 
                         moreDialog.moreLike.setOnClickListener(v1 -> { // 点赞
-                            int likeState = dmEntryBase.getLikeState();
-                            String likesId = dmEntryBase.getLikesId();
-                            String[] likesArr = likesId.split(",");  // 按逗号分割
                             StringBuilder likeStr = new StringBuilder();
-                            if (likeState == 1) {
+                            if (Arrays.asList(likesArr).contains(String.valueOf(uid))) {
+                                Log.i("889889", likeStr + "取消 === " + uid);
                                 for (String s : likesArr) {
-                                    if (!Objects.equals(s, "1")) {
+                                    if (!Objects.equals(s, String.valueOf(uid))) {
                                         if (likeStr.length() == 0){
                                             likeStr = new StringBuilder(s);
                                         } else {
@@ -333,25 +342,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                         }
                                     }
                                 }
-                                likeState = 0;
                             } else {
                                 for (String s : likesArr) {
-                                    if (Objects.equals(s, "1")) {
-                                        if (likeStr.length() == 0){
-                                            likeStr = new StringBuilder(s);
-                                        } else {
-                                            likeStr.append(",").append(s);
-                                        }
+                                    if (likeStr.length() == 0){
+                                        likeStr = new StringBuilder(s);
+                                    } else {
+                                        likeStr.append(",").append(s);
                                     }
                                 }
-                                likeStr.append(1);
-                                likeState = 1;
+                                if (likeStr.length() == 0){
+                                    likeStr = new StringBuilder(String.valueOf(uid));
+                                } else {
+                                    likeStr.append(",").append(uid);
+                                }
+                                Log.i("889889", likeStr + "点赞 === " + uid);
                             }
 
                             // 请求更新数据
                             UserOuterClass.UpdateUserRequest user = UserOuterClass.UpdateUserRequest.newBuilder()
                                     .setId(dmEntryBase.getId())
-                                    .setLikeState(likeState)
                                     .setLikesId(likeStr.toString())
                                     .build();
                             ProtoApiClient.achieveProto("/update_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
@@ -442,7 +451,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             }
         });
 
-        // 列表信息请求
+            // 列表信息请求
         UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
         ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
             List<DMEntryBase> list = new ArrayList<>();
@@ -454,6 +463,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             mData.clear();
             mData.addAll(list);
             adapter = new DMEntryAdapter(mData, viewmodel);
+            adapter.notifyDataSetChanged();
             // 设置优化
             viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(getBaseContext()));
             viewbinding.mainRecycler.setHasFixedSize(true);
@@ -509,19 +519,29 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         String time = user.getTimeStr();
         String friendVideoId = user.getFriendVideoId();
         String friendVideoTime = user.getFriendVideoTime();
-        int likeState = user.getLikeState();
         String likesId = user.getLikesId();
 
-        return new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likeState, likesId);
+        return new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likesId);
     }
 
     public void onResume() {
         super.onResume();
+        Log.i("gxgxgxgxgxg", "gxgxgx");
         if (adapter == null) return;
         eiu.dialogOnPlay();
 
         UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
         ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
+
+            // 1. 记录当前的滚动位置
+            LinearLayoutManager layoutManager = (LinearLayoutManager) viewbinding.mainRecycler.getLayoutManager();
+            int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+            View firstVisibleView = layoutManager.findViewByPosition(firstVisiblePosition);
+            int offset = 0;
+            if (firstVisibleView != null) {
+                offset = firstVisibleView.getTop();
+            }
+            // 2. 更新数据
             List<DMEntryBase> list = new ArrayList<>();
             for (UserOuterClass.User user : result.getUsersList()) {
                 DMEntryBase a = getDmEntryBase(user);
@@ -530,16 +550,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
             mData.clear();
             mData.addAll(list);
-            adapter = new DMEntryAdapter(mData, viewmodel);
-            // 设置优化
-            viewbinding.mainRecycler.setLayoutManager(new LinearLayoutManager(this));
-            viewbinding.mainRecycler.setHasFixedSize(true);
-            viewbinding.mainRecycler.setItemViewCacheSize(20); // 增大缓存池大小
-            viewbinding.mainRecycler.setRecycledViewPool(RecyclerViewPool.getSharedPool());
-            viewbinding.mainRecycler.setAdapter(adapter);
+            // 3. 通知数据变化
+            adapter.notifyDataSetChanged();
+            // 4. 恢复滚动位置
+            layoutManager.scrollToPositionWithOffset(firstVisiblePosition, offset);
 
         });
-
 //        List<DMEntryBase> list;
 //        list = FeedManager.getTypeList();
 //        mData.clear();

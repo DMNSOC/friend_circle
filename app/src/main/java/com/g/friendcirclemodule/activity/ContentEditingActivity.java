@@ -1,6 +1,10 @@
 package com.g.friendcirclemodule.activity;
 
+import static com.g.friendcirclemodule.activity.MainActivity.uid;
+import static com.g.friendcirclemodule.utlis.ProtoApiClient.baseUrl;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.lifecycle.Observer;
@@ -24,13 +28,13 @@ import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
 import com.g.mediaselector.model.ResourceItem;
-
+import com.google.protobuf.ByteString;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
 import user.UserOuterClass;
 
 public class ContentEditingActivity extends BaseActivity<ActivityContentEditingBinding, ContentEditingActivityModel> {
@@ -102,48 +106,76 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
         viewbinding.ceBtnCancel.setOnClickListener(v -> {finish();});
         viewbinding.ceBtnPublish.setOnClickListener(v -> {
-            Date data = new Date();
-//            long id = data.getTime();
-            int useId = 1;
-            String dec = viewbinding.ceDescribe.getText().toString();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm");
-            String time = sdf.format(data);
-            String imagePath = "";
-            String videoPath = "";
-            StringBuilder friendVideoTime = new StringBuilder();
+
+            List<Uri> uriList = new ArrayList<>();
             for (ResourceItem resourceItem : list) {
-                if (resourceItem.type == ResourceItem.TYPE_IMAGE) {
-                    if(Objects.equals(imagePath, "")) {
-                        imagePath = resourceItem.path;
-                    } else  {
-                        imagePath = imagePath + "," + resourceItem.path;
-                    }
-                } else {
-                    if(Objects.equals(videoPath, "")) {
-                        friendVideoTime = new StringBuilder(String.valueOf(resourceItem.duration));
-                        videoPath = resourceItem.path;
-                    } else  {
-                        friendVideoTime.append(",").append(resourceItem.duration);
-                        videoPath = videoPath + "," + resourceItem.path;
-                    }
+                Uri u = UtilityMethod.getContentUri(this, resourceItem.path);
+                uriList.add(u);
+            }
+            UserOuterClass.BatchMediaUploadRequest.Builder batchReqBuilder = UserOuterClass.BatchMediaUploadRequest.newBuilder();
+            for (Uri uri : uriList) {
+                String filename = UtilityMethod.getFileName(this, uri); // 你可以自定义实现
+                String mimeType = getContentResolver().getType(uri);
+                byte[] bytes = null; // 复用前面的通用方法
+                try {
+                    bytes = UtilityMethod.readFileToBytes(this, uri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
+                UserOuterClass.MediaFile mediaFile = UserOuterClass.MediaFile.newBuilder()
+                        .setFilename(filename)
+                        .setMimeType(mimeType == null ? "" : mimeType)
+                        .setData(ByteString.copyFrom(bytes))
+                        .build();
+                batchReqBuilder.addFiles(mediaFile);
             }
 
-            // 请求接口
-            UserOuterClass.User user = UserOuterClass.User.newBuilder()
-                    .setUseId(useId)
-                    .setDecStr(dec)
-                    .setFriendImageId(imagePath)
-                    .setTimeStr(time)
-                    .setFriendVideoId(videoPath)
-                    .setFriendVideoTime(friendVideoTime.toString())
-                    .setLikeState(0)
-                    .setLikesId("")
-                    .build();
-            UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
-            ProtoApiClient.achieveProto("/create_user", user, UserOuterClass.UserId.class, this, result -> {});
+            UserOuterClass.BatchMediaUploadRequest batchReq = batchReqBuilder.build();
 
-            finish();
+            ProtoApiClient.achieveProto("/batch_upload_media", batchReq, UserOuterClass.BatchMediaUploadRequest.class, this, result -> {
+                Date data = new Date();
+                int useId = uid;
+                String dec = viewbinding.ceDescribe.getText().toString();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm");
+                String time = sdf.format(data);
+                String imagePath = "";
+                String videoPath = "";
+                StringBuilder friendVideoTime = new StringBuilder();
+                List<UserOuterClass.MediaFile> mediaList = result.getFilesList();
+
+                for (int a = 0; a < list.size(); a++) {
+                    Log.i("99999999999", mediaList.get(a).getData().toStringUtf8());
+                    if (list.get(a).type == ResourceItem.TYPE_VIDEO) {
+                        if(Objects.equals(videoPath, "")) {
+                            friendVideoTime = new StringBuilder(String.valueOf(list.get(a).duration));
+                            videoPath = baseUrl + mediaList.get(a).getData().toStringUtf8();
+                        } else  {
+                            friendVideoTime.append(",").append(list.get(a).duration);
+                            videoPath = videoPath + "," + baseUrl + mediaList.get(a).getData().toStringUtf8();
+                        }
+                    } else {
+                        if(Objects.equals(imagePath, "")) {
+                            imagePath = baseUrl + mediaList.get(a).getData().toStringUtf8();
+                        } else  {
+                            imagePath = imagePath + "," + baseUrl + mediaList.get(a).getData().toStringUtf8();
+                        }
+                    }
+                }
+
+                // 请求接口
+                UserOuterClass.User user = UserOuterClass.User.newBuilder()
+                        .setUseId(useId)
+                        .setDecStr(dec)
+                        .setFriendImageId(imagePath)
+                        .setTimeStr(time)
+                        .setFriendVideoId(videoPath)
+                        .setFriendVideoTime(friendVideoTime.toString())
+                        .setLikesId("")
+                        .build();
+                ProtoApiClient.achieveProto("/create_user", user, UserOuterClass.UserId.class, this, a -> {});
+                finish();
+            });
+
         });
 
         if (type == 2) {

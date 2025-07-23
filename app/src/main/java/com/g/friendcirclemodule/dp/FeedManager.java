@@ -5,39 +5,35 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import com.g.friendcirclemodule.utlis.ProtoApiClient;
+import com.g.friendcirclemodule.utlis.UtilityMethod;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import user.UserOuterClass;
 
 public class FeedManager {
     private static SQLiteDatabase db;
     public static void initDB(Context context) {
         DBOpenHelper helper = new DBOpenHelper(context);
         db = helper.getWritableDatabase();
+
+        int uid = UtilityMethod.getUniqueId(context);
+        UserOuterClass.Info info = UserOuterClass.Info.newBuilder()
+                .setUseId(uid)
+                .setFriendName("")
+                .setFriendHead("")
+                .setFriendBg("")
+                .build();
+
+        ProtoApiClient.achieveProto("/create_info", info, UserOuterClass.Info.class, null, result -> {
+            UpdateUseInfo();
+        });
     }
-    // int friendName, int friendHead, String decStr, Integer[] friendImageId, String time, Integer friendVideoId
-    public static List<DMEntryBase> getTypeList(){
-        List<DMEntryBase> list = new ArrayList<>();
-        String sql = "SELECT * FROM accounttb ORDER BY id DESC";
-        Cursor cursor = db.rawQuery(sql, null);
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-            int useId = cursor.getInt(cursor.getColumnIndexOrThrow("useId"));
-            String decStr = cursor.getString(cursor.getColumnIndexOrThrow("decStr"));
-            String friendImageId = cursor.getString(cursor.getColumnIndexOrThrow("friendImageId"));
-            String time = cursor.getString(cursor.getColumnIndexOrThrow("time"));
-            String friendVideoId = cursor.getString(cursor.getColumnIndexOrThrow("friendVideoId"));
-            String friendVideoTime = cursor.getString(cursor.getColumnIndexOrThrow("friendVideoTime"));
-            int likeState = cursor.getInt(cursor.getColumnIndexOrThrow("likeState"));
-            String likesId = cursor.getString(cursor.getColumnIndexOrThrow("likesId"));
-            DMEntryBase typeBean = new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likeState, likesId);
-            list.add(typeBean);
-        }
-        return list;
-    }
+
     public static List<DMEntryUseInfoBase> getUseInfo(int uId){
         List<DMEntryUseInfoBase> list = new ArrayList<>();
-        String sql = "SELECT * FROM userinfo WHERE useId=? ORDER BY id DESC";
+        String sql = "SELECT * FROM userinfo WHERE useId=? ORDER BY useId DESC";
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(uId)});
         while (cursor.moveToNext()) {
             long id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
@@ -50,44 +46,29 @@ public class FeedManager {
         }
         return list;
     }
-    /*
-    表插入
-     */
-    public static void InsertItemToAccounttb(DMEntryBase bean){
-        ContentValues values = new ContentValues();
-        values.put("id",bean.getId());
-        values.put("useId",bean.getUseId());
-        values.put("decStr",bean.getDecStr());
-        values.put("friendImageId",bean.getFriendImageId());
-        values.put("time",bean.getTime());
-        values.put("friendVideoId",bean.getFriendVideoId());
-        values.put("friendVideoTime",bean.getFriendVideoTime());
-        values.put("likeState",bean.getLikeState());
-        values.put("likesId",bean.getLikesId());
-        db.insert("accounttb", null,values);
-    }
-    /*
-    表更新
-     */
-    public static void UpdateItemToAccounttb(DMEntryBase bean){
-        ContentValues values = new ContentValues();
-        values.put("id",bean.getId());
-        values.put("useId",bean.getUseId());
-        values.put("decStr",bean.getDecStr());
-        values.put("friendImageId",bean.getFriendImageId());
-        values.put("time",bean.getTime());
-        values.put("friendVideoId",bean.getFriendVideoId());
-        values.put("friendVideoTime",bean.getFriendVideoTime());
-        values.put("likeState",bean.getLikeState());
-        values.put("likesId",bean.getLikesId());
-//        Log.i("testtttt", String.valueOf(values));
-        db.insertWithOnConflict("accounttb", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-    }
+    public static void UpdateUseInfo(){
+        UserOuterClass.Empty infoEmpty = UserOuterClass.Empty.newBuilder().build();
+        ProtoApiClient.achieveProto("/list_info", infoEmpty, UserOuterClass.InfoList.class, null, result -> {
+            Log.i("dddddddd", String.valueOf(result.getInfosList()));
+            for (UserOuterClass.Info info : result.getInfosList()) {
 
-    public static int deleteItemFromAccounttbById(int id) {
-        int i = db.delete("accounttb", "id=?", new String[]{id + ""});
-        return i;
-    };
+                ContentValues values = new ContentValues();
+                values.put("id", info.getId());
+                values.put("useId",info.getUseId());
+                if (!Objects.equals(info.getFriendName(), "")) {
+                    values.put("friendName",info.getFriendName());
+                }
+                if (!Objects.equals(info.getFriendHead(), "")) {
+                    values.put("friendHead",info.getFriendHead());
+                }
+                if (!Objects.equals(info.getFriendBg(), "")) {
+                    values.put("friendBg",info.getFriendBg());
+                }
+                db.insertWithOnConflict("userinfo", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+//                Log.i("Testttttttt", String.valueOf(values));
+            }
+        });
+    }
 
     /*
     用户信息表插入修改
@@ -106,7 +87,7 @@ public class FeedManager {
             values.put("friendBg",bean.getFriendBg());
         }
         db.insertWithOnConflict("userinfo", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-        Log.i("Testttttttt", String.valueOf(values));
+//        Log.i("Testttttttt", String.valueOf(values));
     }
 
 

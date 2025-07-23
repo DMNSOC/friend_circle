@@ -2,9 +2,8 @@ package com.g.friendcirclemodule.utlis;
 
 import static com.g.friendcirclemodule.activity.MainActivity.hostActivity;
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +15,6 @@ import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.dialog.PreviewDialog;
 import com.g.friendcirclemodule.interface_method.EnterImageUIProvider;
 import com.g.mediaselector.model.ResourceItem;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -89,35 +87,37 @@ public class EnterImageUI implements EnterImageUIProvider {
             binding.ceRelative0.setVisibility(View.VISIBLE);
             binding.reImagesGrid.setVisibility(View.GONE);
 
-
             ViewGroup.LayoutParams params = binding.reImagesZero.getLayoutParams();
 
-            if (list.get(0).type == ResourceItem.TYPE_VIDEO) {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(list.get(0).path); // 支持文件路径或Uri
-                String widthStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                String heightStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-                if (widthStr != null && heightStr != null) {
-                    int width = Integer.parseInt(widthStr);
-                    int height = Integer.parseInt(heightStr);
-                    params.width = UtilityMethod.pxToDp(binding.getRoot().getContext(), width * 2);
-                    params.height = UtilityMethod.pxToDp(binding.getRoot().getContext(), height * 2);
-                }
-                try {
-                    retriever.release();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-            } else {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true; // 仅解码尺寸
-                BitmapFactory.decodeFile(list.get(0).path, options);
-                int width = options.outWidth;
-                int height = options.outHeight;
-                params.width = UtilityMethod.pxToDp(binding.getRoot().getContext(), width);
-                params.height = UtilityMethod.pxToDp(binding.getRoot().getContext(), height);
-            }
+//            if (list.get(0).type == ResourceItem.TYPE_VIDEO) {
+//                File videoFile = new File(list.get(0).path);
+//                if(videoFile.exists()) {
+//                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//                    retriever.setDataSource(list.get(0).path); // 支持文件路径或Uri
+//                    String widthStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+//                    String heightStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+//                    if (widthStr != null && heightStr != null) {
+//                        int width = Integer.parseInt(widthStr);
+//                        int height = Integer.parseInt(heightStr);
+//                        params.width = UtilityMethod.pxToDp(binding.getRoot().getContext(), width * 2);
+//                        params.height = UtilityMethod.pxToDp(binding.getRoot().getContext(), height * 2);
+//                    }
+//                    try {
+//                        retriever.release();
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//
+//            } else {
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inJustDecodeBounds = true; // 仅解码尺寸
+//                BitmapFactory.decodeFile(list.get(0).path, options);
+//                int width = options.outWidth;
+//                int height = options.outHeight;
+//                params.width = UtilityMethod.pxToDp(binding.getRoot().getContext(), width);
+//                params.height = UtilityMethod.pxToDp(binding.getRoot().getContext(), height);
+//            }
 
             binding.videoTimeZero.setVisibility(View.GONE);
 
@@ -134,6 +134,9 @@ public class EnterImageUI implements EnterImageUIProvider {
             }
 
             binding.reImagesZero.setLayoutParams(params);
+
+            Log.i("99999999999", list.get(0).path);
+
             Glide.with(binding.getRoot())
                     .load(list.get(0).path)
                     .placeholder(R.mipmap.question_mark)

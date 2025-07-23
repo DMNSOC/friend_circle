@@ -10,8 +10,7 @@ message User {
   string timeStr = 5;
   string friendVideoId = 6;
   string friendVideoTime = 7;
-  int32 likeState = 8;
-  string likesId = 9;
+  string likesId = 8;
 }
 
 message UserId {
@@ -36,4 +35,43 @@ message DeleteUserRequest {
 
 message BoolResult {
   bool success = 1;
+}
+
+message Info {
+  int32 id = 1;
+  int32 useId = 2;
+  optional string friendName = 3;
+  optional string friendHead = 4;
+  optional string friendBg = 5;
+}
+
+message InfoId {
+  int32 id = 1;
+}
+
+message InfoList {
+  repeated Info infos = 1;
+}
+
+
+message MediaFile {
+  string filename = 1;
+  string mime_type = 2;
+  bytes  data = 3;
+}
+
+message BatchMediaUploadRequest {
+  repeated MediaFile files = 1;
+}
+
+message MediaUploadResult {
+  string filename = 1;
+  string media_id = 2;
+  string url = 3;
+  bool   success = 4;
+  string error_msg = 5;
+}
+
+message BatchMediaUploadResponse {
+  repeated MediaUploadResult results = 1;
 }

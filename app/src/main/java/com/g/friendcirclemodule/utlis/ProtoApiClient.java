@@ -1,5 +1,6 @@
 package com.g.friendcirclemodule.utlis;
 
+import static com.g.friendcirclemodule.activity.MainActivity.hostActivity;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 public class ProtoApiClient {
-    private static final String baseUrl = "http://10.0.2.2:5000";
+    public static final String baseUrl = "http://10.0.2.2:5000";
     private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType MEDIA_TYPE_PROTO = MediaType.parse("application/octet-stream");
 
@@ -55,9 +56,16 @@ public class ProtoApiClient {
             try {
                 respObj = postProto(path, requestBodyObj, respClass);
             } catch (IOException e) {
-                activity.runOnUiThread(() ->
-                        Toast.makeText(activity, R.string.tip_title_5, Toast.LENGTH_SHORT).show()
-                );
+                Activity ac = hostActivity;
+                if (ac != null) {
+                    ac = activity;
+                }
+                Activity finalAc = ac;
+                if (ac != null) {
+                    ac.runOnUiThread(() ->
+                            Toast.makeText(finalAc, R.string.tip_title_5, Toast.LENGTH_SHORT).show()
+                    );
+                }
             }
             if (respObj == null) return;
             T finalRespObj = respObj;

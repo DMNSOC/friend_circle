@@ -1,12 +1,9 @@
 package com.g.friendcirclemodule.activity;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowMetrics;

@@ -1,5 +1,7 @@
 package com.g.friendcirclemodule.dialog;
 
+import static com.g.friendcirclemodule.activity.MainActivity.uid;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -30,9 +32,9 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
             cancel();
         });
         viewbinding.setNameBtnEnsure.setOnClickListener(v -> {
-            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uId);
+            List<DMEntryUseInfoBase> coverInfoBaseList = FeedManager.getUseInfo(uid);
             long id = 1;
-            int useId = 1;
+            int useId = uid;
             String friendName = String.valueOf(viewbinding.setNameEt.getText());
             String friendHead = "";
             String friendBg = "";
