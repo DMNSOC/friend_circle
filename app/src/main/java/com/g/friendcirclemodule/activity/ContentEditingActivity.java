@@ -1,7 +1,7 @@
 package com.g.friendcirclemodule.activity;
 
 import static com.g.friendcirclemodule.activity.MainActivity.uid;
-import static com.g.friendcirclemodule.utlis.ProtoApiClient.baseUrl;
+import static com.g.friendcirclemodule.uc.ProtoApiClient.baseUrl;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +23,7 @@ import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
 import com.g.friendcirclemodule.model.ContentEditingActivityModel;
 import com.g.friendcirclemodule.utlis.DragToDeleteCallback;
-import com.g.friendcirclemodule.utlis.ProtoApiClient;
+import com.g.friendcirclemodule.uc.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;

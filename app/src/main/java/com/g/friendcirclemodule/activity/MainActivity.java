@@ -39,8 +39,9 @@ import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.dp.AdapterVPBase;
 import com.g.friendcirclemodule.model.MainActivityModel;
 import com.g.friendcirclemodule.dialog.SettingDialog;
+import com.g.friendcirclemodule.uc.WebSocketManager;
 import com.g.friendcirclemodule.utlis.EnterImageUI;
-import com.g.friendcirclemodule.utlis.ProtoApiClient;
+import com.g.friendcirclemodule.uc.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;
@@ -64,6 +65,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     boolean isOpen = false;
     boolean isReceiverRegistered = false;
     public static int uid;
+    WebSocketManager wsManager = new WebSocketManager();
 
     EnterImageUI eiu = new EnterImageUI();
 
@@ -100,6 +102,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     protected void initData() {
         super.initData();
         uid = UtilityMethod.getUniqueId(this);
+        wsManager.connect(uid, ()->{
+            // 收到推送更新
+            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+            intent.putExtra("data_key", "更新数据");
+            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+        });
     }
 
     @Override
@@ -136,15 +144,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         }
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendBg(), "") && dmEntryUseInfoBase.getFriendBg() != null) {
-//                            Bitmap croppedBitmap;
-//                            try {
-//                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendBg())));
-//                            } catch (FileNotFoundException e) {
-//                                throw new RuntimeException(e);
-//                            }
 
                             vb.mainTopBg.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//                            vb.mainTopBg.setImageBitmap(croppedBitmap);
                             Glide.with(getBaseContext())
                                     .load(dmEntryUseInfoBase.getFriendBg())
                                     .placeholder(R.mipmap.tx)
@@ -219,22 +220,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         DMEntryUseInfoBase dmEntryUseInfoBase = infoBaseList.get(0);
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendHead(), "") && dmEntryUseInfoBase.getFriendHead() != null) {
-//                            Bitmap croppedBitmap;
-//                            try {
-//                                croppedBitmap = BitmapFactory.decodeStream(vb.getRoot().getContext().getContentResolver().openInputStream(Uri.parse(dmEntryUseInfoBase.getFriendHead())));
-//                            } catch (FileNotFoundException e) {
-//                                throw new RuntimeException(e);
-//                            }
                             Glide.with(getBaseContext())
                                     .load(dmEntryUseInfoBase.getFriendHead())
                                     .placeholder(R.mipmap.tx)
                                     .override(300, 300)
                                     .into(vb.friendEntryHead); // Glide加载
-//                            vb.friendEntryHead.setImageBitmap(croppedBitmap);
                         } else {
                             vb.friendEntryHead.setImageResource(R.mipmap.tx);
                         }
-
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendName(), "") && dmEntryUseInfoBase.getFriendName() != null) {
                             vb.friendEntryName.setText(dmEntryUseInfoBase.getFriendName());
                         } else {
@@ -473,13 +466,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
         });
 
-//        List<DMEntryBase> list;
-//        list = FeedManager.getTypeList();
-//        mData.clear();
-//        mData.addAll(list);
-//        adapter = new DMEntryAdapter(mData, viewmodel);
-//        viewbinding.mainRecycler.setAdapter(adapter);
-
         viewbinding.mainRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() { // 监听方法
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -556,16 +542,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             layoutManager.scrollToPositionWithOffset(firstVisiblePosition, offset);
 
         });
-//        List<DMEntryBase> list;
-//        list = FeedManager.getTypeList();
-//        mData.clear();
-//        mData.addAll(list);
-//        adapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         eiu.dialogOnPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        wsManager.disconnect();
     }
 }

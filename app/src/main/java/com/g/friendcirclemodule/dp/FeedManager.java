@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import com.g.friendcirclemodule.utlis.ProtoApiClient;
+import com.g.friendcirclemodule.uc.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.g.friendcirclemodule.dialog;
 
 import static com.g.friendcirclemodule.activity.MainActivity.uid;
-import static com.g.friendcirclemodule.utlis.ProtoApiClient.baseUrl;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,7 @@ import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
-import com.g.friendcirclemodule.utlis.ProtoApiClient;
+import com.g.friendcirclemodule.uc.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.SafeHandler;
 import user.UserOuterClass;
 

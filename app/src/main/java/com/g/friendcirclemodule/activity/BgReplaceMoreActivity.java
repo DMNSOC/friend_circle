@@ -1,7 +1,7 @@
 package com.g.friendcirclemodule.activity;
 
 import static com.g.friendcirclemodule.activity.MainActivity.uid;
-import static com.g.friendcirclemodule.utlis.ProtoApiClient.baseUrl;
+import static com.g.friendcirclemodule.uc.ProtoApiClient.baseUrl;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +12,7 @@ import com.g.friendcirclemodule.databinding.ActivityBgReplaceMoreBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
 import com.g.friendcirclemodule.model.BaseModel;
-import com.g.friendcirclemodule.utlis.ProtoApiClient;
+import com.g.friendcirclemodule.uc.ProtoApiClient;
 import com.g.friendcirclemodule.utlis.UtilityMethod;
 import com.g.mediaselector.MyUIProvider;
 import com.g.mediaselector.PhotoLibrary;

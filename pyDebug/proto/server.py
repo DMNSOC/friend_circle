@@ -1,11 +1,12 @@
 from flask import Flask, request, Response, send_file
+from flask_socketio import SocketIO, emit
 import sqlite3
 import user_pb2
 import os
 import uuid
 
-
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins='*')
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -39,19 +40,18 @@ def init_db():
     conn.commit()
     conn.close()
 
-#     conf = sqlite3.connect(DB_INFO)
-#     d = conf.cursor()
-#     d.execute('''
-#         CREATE TABLE IF NOT EXISTS info (
-#             id INTEGER PRIMARY KEY AUTOINCREMENT,
-#             useId INTEGER NOT NULL,
-#             friendName TEXT NOT NULL,
-#             friendHead TEXT NOT NULL,
-#             friendBg TEXT NOT NULL
-#         )
-#     ''')
-#     conf.commit()
-#     conf.close()
+online_clients = dict()
+@socketio.on('register')
+def handle_register(data):
+    """客户端上线时发送 register 消息: {"user_id": 123}"""
+    user_id = str(data.get("user_id"))
+    online_clients[user_id] = request.sid
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    to_del = [uid for uid, sid in online_clients.items() if sid == request.sid]
+    for uid in to_del:
+        del online_clients[uid]
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
@@ -64,10 +64,20 @@ def create_user():
         c.execute("INSERT INTO users (useId, decStr, friendImageId, timeStr, friendVideoId, friendVideoTime, likesId) VALUES (?, ?, ?, ?, ?, ?, ?)",(user.useId, user.decStr, user.friendImageId, user.timeStr, user.friendVideoId, user.friendVideoTime, user.likesId))
         conn.commit()
         user_id = c.lastrowid
-        conn.close()
 
-        uid = user_pb2.UserId(id=user_id)
-        return Response(uid.SerializeToString(), mimetype='application/octet-stream')
+        c.execute("SELECT id, useId, decStr, friendImageId, timeStr, friendVideoId, friendVideoTime, likesId FROM users WHERE id = ?", (user_id,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            user = user_pb2.User(id=row[0], useId=row[1], decStr=row[2], friendImageId=row[3], timeStr=row[4], friendVideoId=row[5], friendVideoTime=row[6], likesId=row[7])
+            # 推送变更到所有其他客户端
+            for uid, sid in online_clients.items():
+                if int(uid) != user_id:
+                    socketio.emit('user_updated', user.SerializeToString(), room=sid)
+            return Response(user.SerializeToString(), mimetype='application/octet-stream')
+        else:
+            user = user_pb2.User()
+            return Response(user.SerializeToString(), mimetype='application/octet-stream', status=404)
     except Exception as e:
         print(e)
         return Response("error", status=400)
@@ -109,17 +119,46 @@ def update_user():
         c.execute("UPDATE users SET likesId = ? WHERE id = ?", (req.likesId, req.id))
         conn.commit()
         success = c.rowcount > 0
+
+        c.execute("SELECT id, useId, decStr, friendImageId, timeStr, friendVideoId, friendVideoTime, likesId FROM users WHERE id = ?", (req.id,))
+        row = c.fetchone()
         conn.close()
+        if success and row:
+            user = user_pb2.User(id=row[0], useId=row[1], decStr=row[2], friendImageId=row[3], timeStr=row[4], friendVideoId=row[5], friendVideoTime=row[6], likesId=row[7])
+            for uid, sid in online_clients.items():
+                if int(uid) != req.id:
+                    socketio.emit('user_updated', user.SerializeToString(), room=sid)
+            return Response(user.SerializeToString(), mimetype='application/octet-stream')
+        else:
+            user = user_pb2.User()
+            return Response(user.SerializeToString(), mimetype='application/octet-stream', status=404)
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    try:
+        req = user_pb2.DeleteUserRequest()
+        req.ParseFromString(request.data)
+        print(f"收到请求删除信息")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("DELETE FROM users WHERE id = ?", (req.id,))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+
+        if success:
+            for uid, sid in online_clients.items():
+                if int(uid) != req.id:
+                    socketio.emit('user_updated', req.SerializeToString(), room=sid)
         result = user_pb2.BoolResult(success=success)
         status = 200 if success else 404
         return Response(result.SerializeToString(), mimetype='application/octet-stream', status=status)
     except Exception as e:
         print(e)
         return Response("error", status=400)
-
-
-
-
 
 @app.route('/create_info', methods=['POST'])
 def create_info():
@@ -203,25 +242,6 @@ def update_info():
         print(e)
         return Response("error", status=400)
 
-@app.route('/delete_user', methods=['POST'])
-def delete_user():
-    try:
-        req = user_pb2.DeleteUserRequest()
-        req.ParseFromString(request.data)
-        print(f"收到请求删除信息")
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        c.execute("DELETE FROM users WHERE id = ?", (req.id,))
-        conn.commit()
-        success = c.rowcount > 0
-        conn.close()
-        result = user_pb2.BoolResult(success=success)
-        status = 200 if success else 404
-        return Response(result.SerializeToString(), mimetype='application/octet-stream', status=status)
-    except Exception as e:
-        print(e)
-        return Response("error", status=400)
-
 @app.route('/batch_upload_media', methods=['POST'])
 def batch_upload_media():
     req = user_pb2.BatchMediaUploadRequest()
@@ -258,7 +278,6 @@ def get_media(filename):
     if not os.path.isfile(path):
         return "资源为空", 404
     return send_file(path)
-
 
 if __name__ == "__main__":
     init_db()
