@@ -172,18 +172,21 @@ def create_info():
         row = c.fetchone()
         if row:
             info_id = c.lastrowid
-            conn.close()
-            uid = user_pb2.InfoId(id=info_id)
-            return Response(uid.SerializeToString(), mimetype='application/octet-stream')
         else:
             c = conn.cursor()
             c.execute("INSERT INTO info (useId, friendName, friendHead, friendBg) VALUES (?, ?, ?, ?)",(info.useId, info.friendName, info.friendHead, info.friendBg))
             conn.commit()
             info_id = c.lastrowid
-            conn.close()
-            uid = user_pb2.InfoId(id=info_id)
-            return Response(uid.SerializeToString(), mimetype='application/octet-stream')
 
+        success = c.rowcount > 0
+        conn.close()
+        uInfo = user_pb2.InfoId(id=info_id)
+        if row:
+            for uid, sid in online_clients.items():
+                if int(uid) != info_id:
+                    socketio.emit('info_updated', req.SerializeToString(), room=sid)
+        status = 200 if success else 404
+        return Response(uInfo.SerializeToString(), mimetype='application/octet-stream', status=status)
     except Exception as e:
         print(e)
         return Response("error", status=400)
@@ -233,11 +236,17 @@ def update_info():
         c.execute("UPDATE info SET friendName = ?, friendHead = ?, friendBg = ? WHERE useId = ?", (new_friendName, new_friendHead, new_friendBg, req.useId))
         conn.commit()
 
+        success = c.rowcount > 0
         c.execute("SELECT id, useId, friendName, friendHead, friendBg FROM info WHERE useId = ?", (req.useId,))
         row = c.fetchone()
         user = user_pb2.Info(id=row[0], useId=row[1], friendName=row[2], friendHead=row[3], friendBg=row[4])
         conn.close()
-        return Response(user.SerializeToString(), mimetype='application/octet-stream')
+        if row:
+            for uid, sid in online_clients.items():
+                if int(uid) != req.id:
+                    socketio.emit('info_updated', req.SerializeToString(), room=sid)
+        status = 200 if success else 404
+        return Response(user.SerializeToString(), mimetype='application/octet-stream', status=status)
     except Exception as e:
         print(e)
         return Response("error", status=400)

@@ -282,37 +282,73 @@
             android:layout_alignEnd="@id/friend_entry_time"
             android:padding="5dp">
         </ImageButton>
-        <RelativeLayout
-            android:visibility="gone"
-            android:id="@+id/catalogs_list"
-            android:layout_width="290dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/interact"
             android:layout_below="@id/friend_entry_time"
             android:layout_alignStart="@id/friend_entry_dec"
             android:layout_marginTop="10dp"
-            android:background="@drawable/grey_backdrop">
-            <ImageView
-                android:id="@+id/catalogs_favorite_image"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/favorite_border">
-            </ImageView>
-            <TextView
-                android:id="@+id/catalogs_text"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text=""
-                android:textColor="@color/grey_7D7D7D"
-                android:layout_toEndOf="@id/catalogs_favorite_image"
-                android:layout_marginTop="2dp">
-            </TextView>
-        </RelativeLayout>
+            android:background="@drawable/grey_backdrop"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/catalogs_list"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/catalogs_favorite_image"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/favorite_border">
+                </ImageView>
+                <TextView
+                    android:id="@+id/catalogs_text"
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text=""
+                    android:textColor="@color/grey_7D7D7D"
+                    android:layout_toEndOf="@id/catalogs_favorite_image"
+                    android:layout_marginTop="2dp">
+                </TextView>
+            </RelativeLayout>
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/remark_list"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:background="@color/grey_7D7D7D"
+                    android:padding="5dp">
+                </View>
+                <TextView
+                    android:id="@+id/remark_name"
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text=""
+                    android:textColor="@color/grey_7D7D7D"
+                    android:layout_marginTop="2dp">
+                </TextView>
+                <TextView
+                    android:id="@+id/remark_des"
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text=""
+                    android:textColor="@color/grey_7D7D7D"
+                    android:layout_marginTop="2dp">
+                </TextView>
+            </RelativeLayout>
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="0.1dp"
             android:background="@color/grey_7D7D7D"
-            android:layout_below="@id/catalogs_list"
+            android:layout_below="@id/interact"
             android:layout_marginTop="10dp">
         </View>
 

@@ -1,12 +1,15 @@
 package com.g.friendcirclemodule.activity;
 
+import static com.g.friendcirclemodule.activity.MainActivity.onLineState;
 import static com.g.friendcirclemodule.activity.MainActivity.uid;
+import static com.g.friendcirclemodule.activity.MainActivity.wsManager;
 import static com.g.friendcirclemodule.uc.ProtoApiClient.baseUrl;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -45,8 +48,10 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
     int type = 1;
     int itemNum = 3;
     int selectNum = 6;
+    boolean isPublishState = false;
     @Override
     protected void initData() {
+        wsManager.discon(this::finish);
         adjustCustomStatusBar(viewbinding.mainToolbar);
         initInsets(viewbinding.main);
         Bundle receivedBundle = getIntent().getExtras();
@@ -106,7 +111,15 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
 
         viewbinding.ceBtnCancel.setOnClickListener(v -> {finish();});
         viewbinding.ceBtnPublish.setOnClickListener(v -> {
-
+            if (!onLineState) {
+                Toast.makeText(this, R.string.tip_title_5, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (isPublishState) {
+                Toast.makeText(this, R.string.tip_title_6, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            isPublishState = true;
             List<Uri> uriList = new ArrayList<>();
             for (ResourceItem resourceItem : list) {
                 Uri u = UtilityMethod.getContentUri(this, resourceItem.path);
@@ -172,8 +185,9 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                         .setFriendVideoTime(friendVideoTime.toString())
                         .setLikesId("")
                         .build();
-                ProtoApiClient.achieveProto("/create_user", user, UserOuterClass.UserId.class, this, a -> {});
-                finish();
+                ProtoApiClient.achieveProto("/create_user", user, UserOuterClass.UserId.class, this, a -> {
+                    finish();
+                });
             });
 
         });
@@ -185,6 +199,14 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
             adapter.notifyDataSetChanged();
             //点击事件
             adapter.setOnItemClickListener((hv) -> {
+                if (!onLineState) {
+                    Toast.makeText(this, R.string.tip_title_5, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (isPublishState) {
+                    Toast.makeText(this, R.string.tip_title_6, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 onItemClickListener(hv);
             });
             // 设置 ItemTouchHelper

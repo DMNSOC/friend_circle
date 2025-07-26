@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -65,7 +67,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     boolean isOpen = false;
     boolean isReceiverRegistered = false;
     public static int uid;
-    WebSocketManager wsManager = new WebSocketManager();
+
+    public static boolean onLineState = false;
+    public static WebSocketManager wsManager = new WebSocketManager();
 
     EnterImageUI eiu = new EnterImageUI();
 
@@ -103,16 +107,29 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         super.initData();
         uid = UtilityMethod.getUniqueId(this);
         wsManager.connect(uid, ()->{
+            onLineState = true;
+        });
+        wsManager.userUpdatedEvent(()->{
             // 收到推送更新
             Intent intent = new Intent("ACTION_DIALOG_CLOSED");
             intent.putExtra("data_key", "更新数据");
             LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
         });
+        wsManager.infoUpdatedEvent(()->{
+            FeedManager.UpdateUseInfo();
+            // 收到推送更新
+            Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+            intent.putExtra("data_key", "更新数据");
+            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+        });
+        wsManager.discon(()->{
+            onLineState = false;
+        });
     }
 
     @Override
     protected void initView() {
-
+        Log.i("99999999111111", String.valueOf(onLineState));
         super.initView();
 
         // 观察LiveData
@@ -148,8 +165,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             vb.mainTopBg.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             Glide.with(getBaseContext())
                                     .load(dmEntryUseInfoBase.getFriendBg())
-                                    .placeholder(R.mipmap.tx)
-                                    .override(300, 300)
+                                    .placeholder(R.mipmap.bz1)
                                     .into(vb.mainTopBg); // Glide加载
                         } else {
                             vb.mainTopBg.setImageResource(R.mipmap.bz1);
@@ -199,10 +215,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
                     });
                     vb.mainImages.setOnClickListener(v -> {
+                        if (!onLineState) {
+                            Toast.makeText(getBaseContext(), R.string.tip_title_5, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         Intent i = new Intent(hostActivity, BgReplaceMoreActivity.class);
                         hostActivity.startActivity(i);
                     });
                     vb.mainTopTx.setOnClickListener(view -> {
+                        if (!onLineState) {
+                            Toast.makeText(getBaseContext(), R.string.tip_title_5, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         SettingDialog moreDialog = new SettingDialog(MainActivity.this);
                         moreDialog.show();
                     });
@@ -351,31 +375,35 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                                 Log.i("889889", likeStr + "点赞 === " + uid);
                             }
 
-                            // 请求更新数据
-                            UserOuterClass.UpdateUserRequest user = UserOuterClass.UpdateUserRequest.newBuilder()
-                                    .setId(dmEntryBase.getId())
-                                    .setLikesId(likeStr.toString())
-                                    .build();
-                            ProtoApiClient.achieveProto("/update_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
-                                Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-                                intent.putExtra("data_key", "更新数据");
-                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-                                popup.dismiss();
-                            });
+                            if (onLineState) {
+                                // 请求更新数据
+                                UserOuterClass.UpdateUserRequest user = UserOuterClass.UpdateUserRequest.newBuilder()
+                                        .setId(dmEntryBase.getId())
+                                        .setLikesId(likeStr.toString())
+                                        .build();
+                                ProtoApiClient.achieveProto("/update_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
+                                    Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                                    intent.putExtra("data_key", "更新数据");
+                                    LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                                    popup.dismiss();
+                                });
+                            }
 
                         });
                         moreDialog.moreDelete.setOnClickListener(v1 -> { // 删除条目
 
-                            // 请求更新数据
-                            UserOuterClass.DeleteUserRequest user = UserOuterClass.DeleteUserRequest.newBuilder()
-                                    .setId(dmEntryBase.getId())
-                                    .build();
-                            ProtoApiClient.achieveProto("/delete_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
-                                Intent intent = new Intent("ACTION_DIALOG_CLOSED");
-                                intent.putExtra("data_key", "更新数据");
-                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
-                                popup.dismiss();
-                            });
+                            if (onLineState) {
+                                // 请求更新数据
+                                UserOuterClass.DeleteUserRequest user = UserOuterClass.DeleteUserRequest.newBuilder()
+                                        .setId(dmEntryBase.getId())
+                                        .build();
+                                ProtoApiClient.achieveProto("/delete_user", user, UserOuterClass.BoolResult.class, getParent(), result -> {
+                                    Intent intent = new Intent("ACTION_DIALOG_CLOSED");
+                                    intent.putExtra("data_key", "更新数据");
+                                    LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                                    popup.dismiss();
+                                });
+                            }
 
                         });
                     });
@@ -406,6 +434,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        if (!onLineState) {
+                            Toast.makeText(getBaseContext(), R.string.tip_title_5, Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                         // 启动长按
                         longPressRunnable = () -> {
                             Bundle bundle = new Bundle();
@@ -419,6 +451,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         break;
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
+                        if (!onLineState) {
+                            Toast.makeText(getBaseContext(), R.string.tip_title_5, Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                         // 移除长按检测
                         longPressHandler.removeCallbacks(longPressRunnable);
                         if (!isOpen) {
@@ -444,7 +480,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             }
         });
 
-            // 列表信息请求
+
+        // 列表信息请求
         UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
         ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
             List<DMEntryBase> list = new ArrayList<>();
@@ -512,6 +549,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
     public void onResume() {
         super.onResume();
+        if (!onLineState) return;
         Log.i("gxgxgxgxgxg", "gxgxgx");
         if (adapter == null) return;
         eiu.dialogOnPlay();
