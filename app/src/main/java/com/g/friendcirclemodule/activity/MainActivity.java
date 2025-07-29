@@ -2,6 +2,7 @@ package com.g.friendcirclemodule.activity;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +37,9 @@ import com.g.friendcirclemodule.adapter.RecyclerViewPool;
 import com.g.friendcirclemodule.databinding.ActivityMainBinding;
 import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
+import com.g.friendcirclemodule.dialog.CommentDialog;
+import com.g.friendcirclemodule.dialog.SetNameDialog;
+import com.g.friendcirclemodule.dp.CommentBase;
 import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.EditDataManager;
@@ -54,6 +60,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import com.g.friendcirclemodule.databinding.MoreDialogBinding;
+
+import org.w3c.dom.Comment;
+
 import user.UserOuterClass;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityModel> {
@@ -62,16 +71,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     DMEntryAdapter adapter;
     int toolbarType = 1;
     int offsetY = 0;
+    String useName = "";
     private Handler longPressHandler;
     private Runnable longPressRunnable;
     boolean isOpen = false;
     boolean isReceiverRegistered = false;
     public static int uid;
-
     public static boolean onLineState = false;
     public static WebSocketManager wsManager = new WebSocketManager();
 
     EnterImageUI eiu = new EnterImageUI();
+
+    UserOuterClass.UserList userList;
 
     @Override
     protected void onStart() {
@@ -108,6 +119,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         uid = UtilityMethod.getUniqueId(this);
         wsManager.connect(uid, ()->{
             onLineState = true;
+            updateCommentData(null);
         });
         wsManager.userUpdatedEvent(()->{
             // 收到推送更新
@@ -121,6 +133,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             Intent intent = new Intent("ACTION_DIALOG_CLOSED");
             intent.putExtra("data_key", "更新数据");
             LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+        });
+        wsManager.commentUpdatedEvent(() -> {
+            updateCommentData(this::recyclerPosUpdate);
         });
         wsManager.discon(()->{
             onLineState = false;
@@ -156,8 +171,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendName(), "") && dmEntryUseInfoBase.getFriendName() != null) {
                             vb.mainTopName.setText(dmEntryUseInfoBase.getFriendName());
+                            useName = dmEntryUseInfoBase.getFriendName();
                         } else {
                             vb.mainTopName.setText(R.string.user_name);
+                            useName = getString(R.string.user_name);
                         }
 
                         if (!Objects.equals(dmEntryUseInfoBase.getFriendBg(), "") && dmEntryUseInfoBase.getFriendBg() != null) {
@@ -174,6 +191,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     } else {
                         vb.mainTopTx.setImageResource(R.mipmap.tx);
                         vb.mainTopName.setText(R.string.user_name);
+                        useName = getString(R.string.user_name);
                         vb.mainTopBg.setImageResource(R.mipmap.bz1);
                     }
 
@@ -272,6 +290,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     vb.friendEntryTime.setText(vb.getRoot().getContext().getString(R.string.entry_time, String.valueOf(dmEntryBase.getTime())));
 
                     vb.catalogsList.setVisibility(View.GONE);
+                    vb.interactLine.setVisibility(View.GONE);
+                    vb.remarkList.setVisibility(View.GONE);
 
                     String likesId = dmEntryBase.getLikesId();
                     String[] likesArr = likesId.split(",");  // 按逗号分割
@@ -340,7 +360,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                     }
 
                     vb.friendEntryMore.setOnClickListener(v -> {
-                        PopupWindow popup = new PopupWindow(moreDialog.getRoot(), 180, 300, true);
+                        PopupWindow popup = new PopupWindow(moreDialog.getRoot(), 180, 400, true);
                         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         popup.setTouchable(true);
                         popup.setOutsideTouchable(true);
@@ -406,12 +426,34 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                             }
 
                         });
+                        moreDialog.moreComment.setOnClickListener(v2 -> {
+                            showCommentDialog(null, useName,dmEntryBase.getId());
+                            popup.dismiss();
+                        });
                     });
                     if (IGList.isEmpty()) {
                         vb.rvImages.setVisibility(View.GONE);
                     } else {
                         vb.rvImages.setVisibility(View.VISIBLE);
                         eiu.bindImageView(vb, IGList);
+                    }
+
+                    if (!dmEntryBase.getCommentList().isEmpty()) {
+                        vb.interactLine.setVisibility(View.VISIBLE);
+                        vb.remarkList.setVisibility(View.VISIBLE);
+                        vb.commentContainer.removeAllViews();
+                        Log.i("FATAL EXCEPTION",String.valueOf(dmEntryBase.getCommentList()));
+                        for (CommentBase comment : dmEntryBase.getCommentList()) {
+                            TextView commentView = new TextView(vb.getRoot().getContext());
+                            String displayText = comment.getReplyTo() == null
+                                    ? comment.getCommenter() + ": " + comment.getContent()
+                                    : comment.getCommenter() + " 回复 " + comment.getReplyTo() + ": " + comment.getContent();
+                            commentView.setText(displayText);
+                            commentView.setPadding(8, 4, 8, 4);
+                            commentView.setTextSize(14);
+                            commentView.setOnClickListener(v -> showCommentDialog(comment, useName, dmEntryBase.getId())); // 点击评论回复
+                            vb.commentContainer.addView(commentView);
+                        }
                     }
                 }
             }
@@ -480,18 +522,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
             }
         });
 
-
         // 列表信息请求
         UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
         ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
-            List<DMEntryBase> list = new ArrayList<>();
-            for (UserOuterClass.User user : result.getUsersList()) {
-                DMEntryBase a = getDmEntryBase(user);
-                list.add(a);
-            }
-            list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
-            mData.clear();
-            mData.addAll(list);
+            userList = result;
+            updateListData();
             adapter = new DMEntryAdapter(mData, viewmodel);
             adapter.notifyDataSetChanged();
             // 设置优化
@@ -534,7 +569,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
     }
 
     @NonNull
-    private static DMEntryBase getDmEntryBase(UserOuterClass.User user) {
+    private static DMEntryBase getDmEntryBase(UserOuterClass.User user, List<CommentBase> list) {
         int id = user.getId();
         int useId = user.getUseId();
         String decStr = user.getDecStr();
@@ -544,7 +579,53 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         String friendVideoTime = user.getFriendVideoTime();
         String likesId = user.getLikesId();
 
-        return new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likesId);
+        return new DMEntryBase(id, useId, decStr, friendImageId, time, friendVideoId, friendVideoTime, likesId, list);
+    }
+
+    public void updateListData() {
+        // 2. 更新数据
+        List<DMEntryBase> list = new ArrayList<>();
+        List<CommentBase> l = new ArrayList<>();
+        for (UserOuterClass.User user : userList.getUsersList()) {
+            l = FeedManager.getCommentList(user.getId());
+            DMEntryBase a = getDmEntryBase(user, l);
+            list.add(a);
+        }
+        list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
+        mData.clear();
+        mData.addAll(list);
+    }
+
+    @NonNull
+    private static CommentBase getCommentBase(UserOuterClass.Comment user) {
+        int id = user.getId();
+        int groupId = user.getGroupId();
+        String commenter = user.getCommenter();
+        String replyTo = user.getReplyTo();
+        String content = user.getContent();
+
+        return new CommentBase(id, groupId, commenter, replyTo, content);
+    }
+
+    // 评论数据更新
+    public void updateCommentData(Runnable c) {
+        FeedManager.deleteAllComment();
+        UserOuterClass.Empty commentEmpty = UserOuterClass.Empty.newBuilder().build();
+        ProtoApiClient.achieveProto("/list_comment", commentEmpty, UserOuterClass.CommentList.class, this, result -> {
+
+            for (UserOuterClass.Comment user : result.getCommentsList()) {
+                Log.i("FATAL EXCEPTION",String.valueOf(getCommentBase(user)));
+                FeedManager.InsertItemToComment(getCommentBase(user));
+            }
+            if (c != null) c.run();
+        });
+
+    }
+
+    // 显示评论输入框
+    private void showCommentDialog(CommentBase replyToComment, String useName,  int gid) {
+        CommentDialog dialog = new CommentDialog(this, replyToComment, useName, gid);
+        dialog.show();
     }
 
     public void onResume() {
@@ -556,30 +637,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
 
         UserOuterClass.Empty empty = UserOuterClass.Empty.newBuilder().build();
         ProtoApiClient.achieveProto("/list_users", empty, UserOuterClass.UserList.class, this, result -> {
-
-            // 1. 记录当前的滚动位置
-            LinearLayoutManager layoutManager = (LinearLayoutManager) viewbinding.mainRecycler.getLayoutManager();
-            int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-            View firstVisibleView = layoutManager.findViewByPosition(firstVisiblePosition);
-            int offset = 0;
-            if (firstVisibleView != null) {
-                offset = firstVisibleView.getTop();
-            }
-            // 2. 更新数据
-            List<DMEntryBase> list = new ArrayList<>();
-            for (UserOuterClass.User user : result.getUsersList()) {
-                DMEntryBase a = getDmEntryBase(user);
-                list.add(a);
-            }
-            list.sort(Comparator.comparingInt(DMEntryBase::getId).reversed());
-            mData.clear();
-            mData.addAll(list);
-            // 3. 通知数据变化
-            adapter.notifyDataSetChanged();
-            // 4. 恢复滚动位置
-            layoutManager.scrollToPositionWithOffset(firstVisiblePosition, offset);
-
+            userList = result;
+            recyclerPosUpdate();
         });
+    }
+
+    public void recyclerPosUpdate() {
+        // 1. 记录当前的滚动位置
+        LinearLayoutManager layoutManager = (LinearLayoutManager) viewbinding.mainRecycler.getLayoutManager();
+        int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+        View firstVisibleView = layoutManager.findViewByPosition(firstVisiblePosition);
+        int offset = 0;
+        if (firstVisibleView != null) {
+            offset = firstVisibleView.getTop();
+        }
+        // 2. 更新数据
+        updateListData();
+        // 3. 通知数据变化
+        adapter.notifyDataSetChanged();
+        // 4. 恢复滚动位置
+        layoutManager.scrollToPositionWithOffset(firstVisiblePosition, offset);
     }
 
     @Override

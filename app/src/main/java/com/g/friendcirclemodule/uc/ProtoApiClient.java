@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 public class ProtoApiClient {
-    public static final String baseUrl = "http://172.20.10.3:5000";
+    public static final String baseUrl = "http://192.168.156.144:5000";
     private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType MEDIA_TYPE_PROTO = MediaType.parse("application/octet-stream");
 

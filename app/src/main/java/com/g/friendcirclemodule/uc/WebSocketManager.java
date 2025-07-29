@@ -77,6 +77,23 @@ public class WebSocketManager {
             socket.connect();
         }
     }
+    // 监听用户评论事件
+    public void commentUpdatedEvent(Runnable commentCallback) {
+        if (socket != null) {
+            socket.on("comment_updated", args -> {
+                try {
+                    byte[] pbData = (byte[]) args[0];
+                    UserOuterClass.User user = UserOuterClass.User.parseFrom(pbData);
+                    System.out.println("收到用户更新: " + user.getId() + " " + user.getUseId());
+                    commentCallback.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            socket.connect();
+        }
+    }
     // 结束清理
     public void disconnect() {
         if (socket != null) {

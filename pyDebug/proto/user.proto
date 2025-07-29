@@ -53,6 +53,21 @@ message InfoList {
   repeated Info infos = 1;
 }
 
+message Comment {
+  int32 id = 1;
+  int32 groupId = 2;
+  optional string commenter = 3;
+  optional string replyTo = 4;
+  optional string content = 5;
+}
+
+message CommentId {
+  int32 id = 1;
+}
+
+message CommentList {
+  repeated Comment comments = 1;
+}
 
 message MediaFile {
   string filename = 1;

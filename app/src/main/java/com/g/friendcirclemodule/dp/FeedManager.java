@@ -31,6 +31,41 @@ public class FeedManager {
         });
     }
 
+
+    public static List<CommentBase> getCommentList(int gId){
+        List<CommentBase> list = new ArrayList<>();
+        String sql = "SELECT * FROM comment WHERE groupId=? ORDER BY id DESC";
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(gId)});
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            int groupId = cursor.getInt(cursor.getColumnIndexOrThrow("groupId"));
+            String commenter = cursor.getString(cursor.getColumnIndexOrThrow("commenter"));
+            String replyTo = cursor.getString(cursor.getColumnIndexOrThrow("replyTo"));
+            String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
+            CommentBase bean = new CommentBase(id, groupId, commenter, replyTo, content);
+            list.add(bean);
+        }
+        return list;
+    }
+    /*
+    表插入
+     */
+    public static void InsertItemToComment(CommentBase bean){
+        ContentValues values = new ContentValues();
+        values.put("id",bean.getId());
+        values.put("groupId",bean.getGroupId());
+        values.put("commenter",bean.getCommenter());
+        values.put("replyTo",bean.getReplyTo());
+        values.put("content",bean.getContent());
+        db.insert("comment", null,values);
+    }
+
+    public static void deleteAllComment() {
+        String sql = "DELETE FROM comment";
+        db.execSQL(sql);
+
+    }
+
     public static List<DMEntryUseInfoBase> getUseInfo(int uId){
         List<DMEntryUseInfoBase> list = new ArrayList<>();
         String sql = "SELECT * FROM userinfo WHERE useId=? ORDER BY useId DESC";

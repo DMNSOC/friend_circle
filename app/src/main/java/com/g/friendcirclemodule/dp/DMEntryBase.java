@@ -1,5 +1,7 @@
 package com.g.friendcirclemodule.dp;
 
+import java.util.List;
+
 public class DMEntryBase {
     int id;
     int useId;
@@ -9,8 +11,9 @@ public class DMEntryBase {
     String friendVideoId;
     String friendVideoTime;
     String likesId;
+    List<CommentBase> commentList;
 
-    public DMEntryBase(int id, int useId, String decStr, String friendImageId, String time, String friendVideoId, String friendVideoTime, String likesId) {
+    public DMEntryBase(int id, int useId, String decStr, String friendImageId, String time, String friendVideoId, String friendVideoTime, String likesId, List<CommentBase> commentList) {
         this.id = id;
         this.useId = useId;
         this.decStr = decStr;
@@ -19,6 +22,7 @@ public class DMEntryBase {
         this.friendVideoId = friendVideoId;
         this.friendVideoTime = friendVideoTime;
         this.likesId = likesId;
+        this.commentList = commentList;
     }
 
     public int getId() {
@@ -83,5 +87,13 @@ public class DMEntryBase {
 
     public void setFriendVideoTime(String friendVideoTime) {
         this.friendVideoTime = friendVideoTime;
+    }
+
+    public List<CommentBase> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<CommentBase> commentList) {
+        this.commentList = commentList;
     }
 }

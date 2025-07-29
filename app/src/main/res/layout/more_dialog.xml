@@ -55,5 +55,23 @@
             android:textStyle="bold">
         </TextView>
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/more_comment"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="@color/black">
+        </View>
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="@string/btn_comment"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textStyle="bold">
+        </TextView>
+    </RelativeLayout>
 
 </LinearLayout>

@@ -10,6 +10,8 @@ import android.os.Looper;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.g.friendcirclemodule.R;
 import com.g.friendcirclemodule.databinding.SetNameDialogBinding;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
 import com.g.friendcirclemodule.dp.FeedManager;
@@ -29,6 +31,9 @@ public class SetNameDialog extends BaseDialog<SetNameDialogBinding, BaseModel> {
     @Override
     protected void initView() {
         super.initView();
+        viewbinding.setNameTv.setText(R.string.modify_name_title);
+        viewbinding.setNameEt.setHint(R.string.modify_name_dec_tips);
+        viewbinding.setNameBtnEnsure.setText(R.string.btn_complete);
         viewbinding.setNameBtnCancel.setOnClickListener(v -> {
             cancel();
         });

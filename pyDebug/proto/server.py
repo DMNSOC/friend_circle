@@ -11,7 +11,6 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 DB_FILE = "users.db"
-DB_INFO = "info.db"
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -35,6 +34,15 @@ def init_db():
             friendName TEXT NOT NULL,
             friendHead TEXT NOT NULL,
             friendBg TEXT NOT NULL
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS comment (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            groupId INTEGER NOT NULL,
+            commenter TEXT NOT NULL,
+            replyTo TEXT NOT NULL,
+            content TEXT NOT NULL
         )
     ''')
     conn.commit()
@@ -153,6 +161,82 @@ def delete_user():
             for uid, sid in online_clients.items():
                 if int(uid) != req.id:
                     socketio.emit('user_updated', req.SerializeToString(), room=sid)
+        result = user_pb2.BoolResult(success=success)
+        status = 200 if success else 404
+        return Response(result.SerializeToString(), mimetype='application/octet-stream', status=status)
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
+@app.route('/create_comment', methods=['POST'])
+def create_comment():
+    try:
+        comment = user_pb2.Comment()
+        comment.ParseFromString(request.data)
+        print(f"收到请求信息 ： {comment.groupId}")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("INSERT INTO comment (groupId, commenter, replyTo, content) VALUES (?, ?, ?, ?)",(comment.groupId, comment.commenter, comment.replyTo, comment.content))
+        conn.commit()
+        comment_id = c.lastrowid
+
+        c.execute("SELECT id, groupId, commenter, replyTo, content FROM comment WHERE id = ?", (comment_id,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            comment = user_pb2.Comment(id=row[0], groupId=row[1], commenter=row[2], replyTo=row[3], content=row[4])
+            # 推送变更到所有其他客户端
+            for uid, sid in online_clients.items():
+                if int(uid) != comment_id:
+                    socketio.emit('comment_updated', comment.SerializeToString(), room=sid)
+            return Response(comment.SerializeToString(), mimetype='application/octet-stream')
+        else:
+            comment = user_pb2.Comment()
+            return Response(comment.SerializeToString(), mimetype='application/octet-stream', status=404)
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
+@app.route('/list_comment', methods=['POST'])
+def list_comment():
+    try:
+        empty = user_pb2.Empty()
+        empty.ParseFromString(request.data)
+        print(f"收到请求列表信息")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT id, groupId, commenter, replyTo, content FROM comment")
+        comments = user_pb2.CommentList()
+        for row in c.fetchall():
+            u = comments.comments.add()
+            u.id = row[0]
+            u.groupId = row[1]
+            u.commenter = row[2]
+            u.replyTo = row[3]
+            u.content = row[4]
+        conn.close()
+        return Response(comments.SerializeToString(), mimetype='application/octet-stream')
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
+@app.route('/delete_comment', methods=['POST'])
+def delete_comment():
+    try:
+        req = user_pb2.DeleteUserRequest()
+        req.ParseFromString(request.data)
+        print(f"收到请求删除信息")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("DELETE FROM comment WHERE id = ?", (req.id,))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+
+        if success:
+            for uid, sid in online_clients.items():
+                if int(uid) != req.id:
+                    socketio.emit('comment_updated', req.SerializeToString(), room=sid)
         result = user_pb2.BoolResult(success=success)
         status = 200 if success else 404
         return Response(result.SerializeToString(), mimetype='application/octet-stream', status=status)
