@@ -1,6 +1,8 @@
 package com.g.friendcirclemodule.adapter;
 
+import static com.g.friendcirclemodule.uc.ProtoApiClient.baseUrl;
 import android.content.Context;
+import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
@@ -51,9 +53,10 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ResourceItem item = data.get(position);
+        Log.i("dddddd", baseUrl + item.path);
         if (holder instanceof ImageHolder) {
             ImageHolder ih = (ImageHolder) holder;
-            Glide.with(ih.binding.getRoot()).load(item.path).placeholder(R.mipmap.add).apply(new RequestOptions().override(Target.SIZE_ORIGINAL)).into(ih.binding.photoView);
+            Glide.with(ih.binding.getRoot()).load(baseUrl + item.path).placeholder(R.mipmap.add).apply(new RequestOptions().override(Target.SIZE_ORIGINAL)).into(ih.binding.photoView);
         } else if (holder instanceof VideoHolder) {
             VideoHolder vh = (VideoHolder) holder;
             if (!playerPosList.contains(position)) {
@@ -61,7 +64,7 @@ public class PreviewPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ExoPlayer player = new ExoPlayer.Builder(vh.binding.getRoot().getContext()).build();
                 vh.binding.videoView.setPlayer(player);
                 // 2. 设置媒体源（支持本地/网络URI）
-                MediaItem mediaItem = MediaItem.fromUri(item.path);
+                MediaItem mediaItem = MediaItem.fromUri(baseUrl + item.path);
                 player.setMediaItem(mediaItem);
                 player.prepare();
                 vh.binding.videoView.setPlaybackStateListener();

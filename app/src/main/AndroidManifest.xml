@@ -54,6 +54,10 @@
             android:exported="false"
             android:screenOrientation="sensorPortrait" />
         <activity
+            android:name=".activity.VisitorActivity"
+            android:exported="false"
+            android:screenOrientation="sensorPortrait" />
+        <activity
             android:name=".activity.MainActivity"
             android:exported="true"
             android:screenOrientation="sensorPortrait">

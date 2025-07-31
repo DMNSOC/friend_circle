@@ -116,6 +116,32 @@ def list_users():
         print(e)
         return Response("error", status=400)
 
+@app.route('/get_users_list', methods=['POST'])
+def get_users_list():
+    try:
+        user = user_pb2.UserId()
+        user.ParseFromString(request.data)
+        print(f"收到请求列表信息")
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT id, useId, decStr, friendImageId, timeStr, friendVideoId, friendVideoTime, likesId FROM users WHERE useId = ?", (user.id,))
+        users = user_pb2.UserList()
+        for row in c.fetchall():
+            u = users.users.add()
+            u.id = row[0]
+            u.useId = row[1]
+            u.decStr = row[2]
+            u.friendImageId = row[3]
+            u.timeStr = row[4]
+            u.friendVideoId = row[5]
+            u.friendVideoTime = row[6]
+            u.likesId = row[7]
+        conn.close()
+        return Response(users.SerializeToString(), mimetype='application/octet-stream')
+    except Exception as e:
+        print(e)
+        return Response("error", status=400)
+
 @app.route('/update_user', methods=['POST'])
 def update_user():
     try:

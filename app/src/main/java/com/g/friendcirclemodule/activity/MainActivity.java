@@ -2,7 +2,6 @@ package com.g.friendcirclemodule.activity;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,7 +35,6 @@ import com.g.friendcirclemodule.databinding.ActivityMainBinding;
 import com.g.friendcirclemodule.databinding.FriendEntryBinding;
 import com.g.friendcirclemodule.databinding.MainTopBinding;
 import com.g.friendcirclemodule.dialog.CommentDialog;
-import com.g.friendcirclemodule.dialog.SetNameDialog;
 import com.g.friendcirclemodule.dp.CommentBase;
 import com.g.friendcirclemodule.dp.DMEntryBase;
 import com.g.friendcirclemodule.dp.DMEntryUseInfoBase;
@@ -60,9 +56,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import com.g.friendcirclemodule.databinding.MoreDialogBinding;
-
-import org.w3c.dom.Comment;
-
 import user.UserOuterClass;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityModel> {
@@ -140,6 +133,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         wsManager.discon(()->{
             onLineState = false;
         });
+
+//        UserOuterClass.UserId userId = UserOuterClass.UserId.newBuilder()
+//                .setId(uid)
+//                .build();
+//        ProtoApiClient.achieveProto("/get_users_list", userId, UserOuterClass.UserList.class, this, result -> {
+//            Log.i("dddddd1", String.valueOf(result));
+//        });
+
     }
 
     @Override
@@ -280,6 +281,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
                         vb.friendEntryHead.setImageResource(R.mipmap.tx);
                         vb.friendEntryName.setText(R.string.user_name);
                     }
+                    vb.friendEntryHead.setOnClickListener(v -> {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("USER_UID", dmEntryBase.getUseId());
+                        Intent i = new Intent(hostActivity, VisitorActivity.class);
+                        i.putExtras(bundle);
+                        startActivity(i);
+                    });
+
 
                     if (Objects.equals(dmEntryBase.getDecStr(), "")) {
                         vb.friendEntryDec.setVisibility(View.GONE);

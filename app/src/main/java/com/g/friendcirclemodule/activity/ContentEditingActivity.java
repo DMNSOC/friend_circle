@@ -3,7 +3,6 @@ package com.g.friendcirclemodule.activity;
 import static com.g.friendcirclemodule.activity.MainActivity.onLineState;
 import static com.g.friendcirclemodule.activity.MainActivity.uid;
 import static com.g.friendcirclemodule.activity.MainActivity.wsManager;
-import static com.g.friendcirclemodule.uc.ProtoApiClient.baseUrl;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -161,16 +160,16 @@ public class ContentEditingActivity extends BaseActivity<ActivityContentEditingB
                     if (list.get(a).type == ResourceItem.TYPE_VIDEO) {
                         if(Objects.equals(videoPath, "")) {
                             friendVideoTime = new StringBuilder(String.valueOf(list.get(a).duration));
-                            videoPath = baseUrl + mediaList.get(a).getData().toStringUtf8();
+                            videoPath = mediaList.get(a).getData().toStringUtf8();
                         } else  {
                             friendVideoTime.append(",").append(list.get(a).duration);
-                            videoPath = videoPath + "," + baseUrl + mediaList.get(a).getData().toStringUtf8();
+                            videoPath = videoPath + "," + mediaList.get(a).getData().toStringUtf8();
                         }
                     } else {
                         if(Objects.equals(imagePath, "")) {
-                            imagePath = baseUrl + mediaList.get(a).getData().toStringUtf8();
+                            imagePath = mediaList.get(a).getData().toStringUtf8();
                         } else  {
-                            imagePath = imagePath + "," + baseUrl + mediaList.get(a).getData().toStringUtf8();
+                            imagePath = imagePath + "," + mediaList.get(a).getData().toStringUtf8();
                         }
                     }
                 }

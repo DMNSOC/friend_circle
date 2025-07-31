@@ -2,6 +2,7 @@
     <string name="app_name">朋友圈</string>
     <string name="user_name">新用户</string>
     <string name="entry_time">发布时间 %1$s</string>
+    <string name="visitor_title">%1$s的动态</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_release">发布</string>
     <string name="btn_complete">完成</string>

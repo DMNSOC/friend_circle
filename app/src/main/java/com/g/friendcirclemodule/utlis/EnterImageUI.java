@@ -1,6 +1,8 @@
 package com.g.friendcirclemodule.utlis;
 
 import static com.g.friendcirclemodule.activity.MainActivity.hostActivity;
+import static com.g.friendcirclemodule.uc.ProtoApiClient.baseUrl;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +62,7 @@ public class EnterImageUI implements EnterImageUIProvider {
                 views.get(i).setVisibility(View.VISIBLE);
 
                 Glide.with(binding.getRoot())
-                        .load(list.get(i).path)
+                        .load(baseUrl + list.get(i).path)
                         .placeholder(R.mipmap.question_mark)
                         .override(300, 300)
                         .into((ImageView) imageViews.get(i)); // Glide加载
@@ -135,10 +137,10 @@ public class EnterImageUI implements EnterImageUIProvider {
 
             binding.reImagesZero.setLayoutParams(params);
 
-            Log.i("99999999999", list.get(0).path);
+            Log.i("99999999999", baseUrl + list.get(0).path);
 
             Glide.with(binding.getRoot())
-                    .load(list.get(0).path)
+                    .load(baseUrl + list.get(0).path)
                     .placeholder(R.mipmap.question_mark)
                     .override(300, 300)
                     .into(binding.reImagesZero); // Glide加载
@@ -146,7 +148,7 @@ public class EnterImageUI implements EnterImageUIProvider {
             // 点击事件
             binding.reImagesZero.setOnClickListener(view -> {
                 Bundle bundle = new Bundle();
-                bundle.putString("PATH", list.get(0).path);
+                bundle.putString("PATH", baseUrl + list.get(0).path);
                 bundle.putInt("TYPE",  list.get(0).type);
                 Context context = hostActivity;
                 dialog = new PreviewDialog(context, (List<ResourceItem>) list, 0);
